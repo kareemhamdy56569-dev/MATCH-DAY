@@ -3,51 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MatchDay AI - جميع الدوريات والمباريات الحية</title>
+    <title>MatchDay AI - جدول المباريات الشامل (يلا شوت ستايل)</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <!-- خلفية فقاعات البينك الجمالية -->
+    <!-- خلفية البينك الجمالية -->
     <div class="pink-bubbles-bg">
         <div class="bubble b1"></div>
         <div class="bubble b2"></div>
         <div class="bubble b3"></div>
     </div>
 
-    <!-- الهيدر العلوي والاختصارات -->
+    <!-- الهيدر العلوي -->
     <header class="app-header">
         <div class="top-bar">
             <h1 class="logo">MatchDay AI ⚡</h1>
             <div class="header-actions">
-                <button class="icon-btn" id="search-btn">🔍</button>
-                <button class="icon-btn" id="filter-btn">⚙️</button>
+                <button class="icon-btn" id="search-btn" title="بحث">🔍</button>
+                <button class="icon-btn" id="filter-btn" title="الإعدادات">⚙️</button>
             </div>
         </div>
 
         <!-- شريط التنقل بين الأيام -->
         <div class="date-navigator">
-            <button class="date-arrow-btn" id="prev-day">◀</button>
+            <button class="date-arrow-btn" id="prev-day">◀ الأمس</button>
             <div class="date-display" id="current-date-text">الجمعة، 04/09/2026</div>
-            <button class="date-arrow-btn" id="next-day">▶</button>
+            <button class="date-arrow-btn" id="next-day">الغد ▶</button>
         </div>
     </header>
 
     <!-- المحتوى الرئيسي -->
     <main class="main-container" id="swipe-container">
 
-        <!-- قسم المفضلة -->
-        <section class="matches-group favorites-section">
-            <div class="group-header">
-                <span>المفضلة</span>
-                <span class="star-icon">⭐</span>
-            </div>
-            <div id="favorites-list">
-                <!-- الماتشات المفضلة -->
-            </div>
-        </section>
-
-        <!-- قسم البطولات المجمعة -->
+        <!-- جدول البطولات والمباريات -->
         <div id="tournaments-container">
             
             <!-- دوري أبطال إفريقيا -->
@@ -56,51 +45,104 @@
                     <span>دوري أبطال إفريقيا - النهائي</span>
                     <span>🏆</span>
                 </div>
-                <div class="match-card" data-match-id="1">
+                <div class="match-card" data-match-id="1" data-tournament="دوري أبطال إفريقيا - النهائي" data-channel="beIN Sports HD 4" data-commentator="حليم الدراجي" data-stadium="ستاد القاهرة الدولي">
                     <div class="team home">
                         <span class="team-name">الأهلي</span>
-                        <div class="team-dot" style="background: #ef4444;"></div>
+                        <span class="team-icon">🦅</span>
                     </div>
                     <div class="match-info">
-                        <span class="match-score">1 - 2</span>
+                        <span class="match-score live">2 - 1</span>
+                        <span class="match-status-text">78' (شوط ثان)</span>
                     </div>
                     <div class="team away">
-                        <div class="team-dot" style="background: #ffffff;"></div>
+                        <span class="team-icon">🐎</span>
                         <span class="team-name">الزمالك</span>
                     </div>
                 </div>
             </div>
 
-            <!-- الدوري الإنجليزي الممتاز (ليفربول شغال مباشر 2-0) -->
+            <!-- الدوري المصري الممتاز -->
             <div class="matches-group">
                 <div class="group-header">
-                    <span>الدوري الإنجليزي الممتاز</span>
-                    <span>🏆</span>
+                    <span>الدوري المصري الممتاز</span>
+                    <span>🇪🇬</span>
                 </div>
-                <div class="match-card" data-match-id="2">
+                <div class="match-card" data-match-id="2" data-tournament="الدوري المصري الممتاز" data-channel="OnTime Sports 1" data-commentator="مؤمن حسن" data-stadium="ستاد الإسكندرية">
                     <div class="team home">
-                        <span class="team-name">إبسويتش تاون</span>
-                        <div class="team-dot" style="background: #3b82f6;"></div>
+                        <span class="team-name">الاتحاد السكندري</span>
+                        <span class="team-icon">🟢</span>
                     </div>
                     <div class="match-info">
-                        <span class="match-score live" style="color: #ef4444; font-weight: bold;">2 - 0 🔴</span>
+                        <span class="match-score live">0 - 0</span>
+                        <span class="match-status-text">35' (شوط أول)</span>
                     </div>
                     <div class="team away">
-                        <div class="team-dot" style="background: #dc2626;"></div>
+                        <span class="team-icon">🚂</span>
+                        <span class="team-name">المصري البورسعيدي</span>
+                    </div>
+                </div>
+                <div class="match-card" data-match-id="3" data-tournament="الدوري المصري الممتاز" data-channel="OnTime Sports 2" data-commentator="بلال علام" data-stadium="ستاد القاهرة">
+                    <div class="team home">
+                        <span class="team-name">بيراميدز</span>
+                        <span class="team-icon">🔵</span>
+                    </div>
+                    <div class="match-info">
+                        <span class="match-time">08:00 م</span>
+                        <span class="match-status-text" style="color:var(--text-muted)">لم تبدأ</span>
+                    </div>
+                    <div class="team away">
+                        <span class="team-icon">🦁</span>
+                        <span class="team-name">سيراميكا كليوباترا</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- الدوري الإنجليزي الممتاز -->
+            <div class="matches-group">
+                <div class="group-header">
+                    <span>الدوري الإنجليزي الممتاز (Premier League)</span>
+                    <span>🏴󠁧󠁢󠁥󠁮󠁧󠁿</span>
+                </div>
+                <div class="match-card" data-match-id="4" data-tournament="الدوري الإنجليزي الممتاز" data-channel="beIN Sports HD 1" data-commentator="عصام الشوالي" data-stadium="بورتمان رود">
+                    <div class="team home">
+                        <span class="team-name">إبسويتش تاون</span>
+                        <span class="team-icon">🚜</span>
+                    </div>
+                    <div class="match-info">
+                        <span class="match-score live">0 - 2</span>
+                        <span class="match-status-text">89' (مباشر)</span>
+                    </div>
+                    <div class="team away">
+                        <span class="team-icon">🔴</span>
                         <span class="team-name">ليفربول</span>
                     </div>
                 </div>
-                <div class="match-card" data-match-id="3">
+                <div class="match-card" data-match-id="5" data-tournament="الدوري الإنجليزي الممتاز" data-channel="beIN Sports HD 1" data-commentator="حفيظ دراجي" data-stadium="الاتحاد">
                     <div class="team home">
                         <span class="team-name">مانشستر سيتي</span>
-                        <div class="team-dot" style="background: #60a5fa;"></div>
+                        <span class="team-icon">🩵</span>
                     </div>
                     <div class="match-info">
-                        <span class="match-time">08:30 م</span>
+                        <span class="match-time">09:30 م</span>
+                        <span class="match-status-text" style="color:var(--text-muted)">لم تبدأ</span>
                     </div>
                     <div class="team away">
-                        <div class="team-dot" style="background: #9ca3af;"></div>
+                        <span class="team-icon">⚪</span>
                         <span class="team-name">آرسنال</span>
+                    </div>
+                </div>
+                <div class="match-card" data-match-id="6" data-tournament="الدوري الإنجليزي الممتاز" data-channel="beIN Sports HD 2" data-commentator="حسن العيدروس" data-stadium="أولد ترافورد">
+                    <div class="team home">
+                        <span class="team-name">مانشستر يونايتد</span>
+                        <span class="team-icon">👹</span>
+                    </div>
+                    <div class="match-info">
+                        <span class="match-time">10:00 م</span>
+                        <span class="match-status-text" style="color:var(--text-muted)">لم تبدأ</span>
+                    </div>
+                    <div class="team away">
+                        <span class="team-icon">🦁</span>
+                        <span class="team-name">تشيلسي</span>
                     </div>
                 </div>
             </div>
@@ -108,20 +150,35 @@
             <!-- الدوري الإسباني -->
             <div class="matches-group">
                 <div class="group-header">
-                    <span>الدوري الإسباني</span>
-                    <span>🏆</span>
+                    <span>الدوري الإسباني (La Liga)</span>
+                    <span>🇪🇸</span>
                 </div>
-                <div class="match-card" data-match-id="4">
+                <div class="match-card" data-match-id="7" data-tournament="الدوري الإسباني" data-channel="beIN Sports HD 3" data-commentator="علي محمد علي" data-stadium="بينيتو فيامارين">
                     <div class="team home">
                         <span class="team-name">ريال بيتيس</span>
-                        <div class="team-dot" style="background: #10b981;"></div>
+                        <span class="team-icon">🟢</span>
                     </div>
                     <div class="match-info">
                         <span class="match-time">10:00 م</span>
+                        <span class="match-status-text" style="color:var(--text-muted)">لم تبدأ</span>
                     </div>
                     <div class="team away">
-                        <div class="team-dot" style="background: #fbbf24;"></div>
+                        <span class="team-icon">👑</span>
                         <span class="team-name">ريال مدريد</span>
+                    </div>
+                </div>
+                <div class="match-card" data-match-id="8" data-tournament="الدوري الإسباني" data-channel="beIN Sports HD 3" data-commentator="خالد الحدي" data-stadium="مونتجويك">
+                    <div class="team home">
+                        <span class="team-name">برشلونة</span>
+                        <span class="team-icon">🔵🔴</span>
+                    </div>
+                    <div class="match-info">
+                        <span class="match-time">11:00 م</span>
+                        <span class="match-status-text" style="color:var(--text-muted)">لم تبدأ</span>
+                    </div>
+                    <div class="team away">
+                        <span class="team-icon">⚪🔵</span>
+                        <span class="team-name">اتلتيكو مدريد</span>
                     </div>
                 </div>
             </div>
@@ -129,19 +186,20 @@
             <!-- الدوري الإيطالي -->
             <div class="matches-group">
                 <div class="group-header">
-                    <span>الدوري الإيطالي</span>
-                    <span>🏆</span>
+                    <span>الدوري الإيطالي (Serie A)</span>
+                    <span>🇮🇹</span>
                 </div>
-                <div class="match-card" data-match-id="5">
+                <div class="match-card" data-match-id="9" data-tournament="الدوري الإيطالي" data-channel="AD Sports 1" data-commentator="عامر عبدالله" data-stadium="سان سيرو">
                     <div class="team home">
                         <span class="team-name">إنتر ميلان</span>
-                        <div class="team-dot" style="background: #3b82f6;"></div>
+                        <span class="team-icon">🐍</span>
                     </div>
                     <div class="match-info">
                         <span class="match-time">09:45 م</span>
+                        <span class="match-status-text" style="color:var(--text-muted)">لم تبدأ</span>
                     </div>
                     <div class="team away">
-                        <div class="team-dot" style="background: #000000;"></div>
+                        <span class="team-icon">🦓</span>
                         <span class="team-name">يوفنتوس</span>
                     </div>
                 </div>
@@ -150,19 +208,20 @@
             <!-- الدوري الألماني -->
             <div class="matches-group">
                 <div class="group-header">
-                    <span>الدوري الألماني</span>
-                    <span>🏆</span>
+                    <span>الدوري الألماني (Bundesliga)</span>
+                    <span>🇩🇪</span>
                 </div>
-                <div class="match-card" data-match-id="6">
+                <div class="match-card" data-match-id="10" data-tournament="الدوري الألماني" data-channel="beIN Sports HD 5" data-commentator="خليل البلوشي" data-stadium="أليانز أرينا">
                     <div class="team home">
                         <span class="team-name">بايرن ميونخ</span>
-                        <div class="team-dot" style="background: #dc2626;"></div>
+                        <span class="team-icon">🔴</span>
                     </div>
                     <div class="match-info">
                         <span class="match-time">09:30 م</span>
+                        <span class="match-status-text" style="color:var(--text-muted)">لم تبدأ</span>
                     </div>
                     <div class="team away">
-                        <div class="team-dot" style="background: #fbbf24;"></div>
+                        <span class="team-icon">🟡</span>
                         <span class="team-name">دورتموند</span>
                     </div>
                 </div>
@@ -171,19 +230,20 @@
             <!-- الدوري الفرنسي -->
             <div class="matches-group">
                 <div class="group-header">
-                    <span>الدوري الفرنسي</span>
-                    <span>🏆</span>
+                    <span>الدوري الفرنسي (Ligue 1)</span>
+                    <span>🇫🇷</span>
                 </div>
-                <div class="match-card" data-match-id="7">
+                <div class="match-card" data-match-id="11" data-tournament="الدوري الفرنسي" data-channel="beIN Sports HD 4" data-commentator="جواد بدة" data-stadium="بارك دي برينس">
                     <div class="team home">
                         <span class="team-name">باريس سان جيرمان</span>
-                        <div class="team-dot" style="background: #1e3a8a;"></div>
+                        <span class="team-icon">🗼</span>
                     </div>
                     <div class="match-info">
                         <span class="match-time">10:00 م</span>
+                        <span class="match-status-text" style="color:var(--text-muted)">لم تبدأ</span>
                     </div>
                     <div class="team away">
-                        <div class="team-dot" style="background: #ea580c;"></div>
+                        <span class="team-icon">⚓</span>
                         <span class="team-name">مارسيليا</span>
                     </div>
                 </div>
@@ -191,20 +251,25 @@
 
         </div>
 
-        <!-- مودال التحليل الذكي -->
+        <!-- مودال تفاصيل الماتش والتحليل الذكي -->
         <div id="match-details-modal" class="ai-analysis-section" style="display: none;">
             <div class="modal-content-box">
                 <div class="modal-top">
-                    <h3 id="modal-tournament-name">اسم البطولة</h3>
+                    <h3 id="modal-tournament-name">تفاصيل المباراة</h3>
                     <button id="close-modal">✖</button>
                 </div>
                 <div class="ai-card-body">
-                    <h4>✨ محرك التوقعات الذكي</h4>
-                    <div class="prediction-bars">
-                        <div class="bar-item"><span>فوز الفريق المضيف 55%</span><div class="progress"><div class="fill" style="width: 55%;"></div></div></div>
-                        <div class="bar-item"><span>التعادل 25%</span><div class="progress"><div class="fill" style="width: 25%;"></div></div></div>
+                    <div class="modal-meta-box">
+                        <div class="meta-row"><span>📺 القناة الناقلة:</span> <strong id="modal-channel">-</strong></div>
+                        <div class="meta-row"><span>🎙️ المعلق:</span> <strong id="modal-commentator">-</strong></div>
+                        <div class="meta-row"><span>🏟️ الملعب:</span> <strong id="modal-stadium">-</strong></div>
                     </div>
-                    <p class="ai-text">التحليل الفني: ضغط عالي متوقع من الأطراف، نسبة استحواذ الكرة ترجح كفة الفريق المضيف في الدقائق المتبقية.</p>
+                    <h4>✨ محرك التوقعات والتحليل الفني</h4>
+                    <div class="prediction-bars">
+                        <div class="bar-item"><span>استحواذ الفريق المضيف (55%)</span><div class="progress"><div class="fill" style="width: 55%;"></div></div></div>
+                        <div class="bar-item"><span>استحواذ الفريق الضيف (45%)</span><div class="progress"><div class="fill" style="width: 45%;"></div></div></div>
+                    </div>
+                    <p class="ai-text" id="modal-ai-text">التحليل الذكي: نسق اللقاء مرتفع جداً، مع توقعات بضغط هجومي مكثف من الأطراف وخلق فرص محققة للتسجيل.</p>
                 </div>
             </div>
         </div>

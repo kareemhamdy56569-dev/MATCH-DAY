@@ -1,5 +1,5 @@
 // ==========================================
-// MatchDay AI - Live & Auto-Refresh Script
+// MatchDay AI - Yalla Shoot Full Engine
 // ==========================================
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -8,21 +8,29 @@ document.addEventListener("DOMContentLoaded", () => {
     setupLiveAutoRefresh();
 });
 
-// تهيئة التطبيق والأحداث
 function initApp() {
     const matchCards = document.querySelectorAll('.match-card');
     const modal = document.getElementById('match-details-modal');
     const closeModalBtn = document.getElementById('close-modal');
     const tournamentTitle = document.getElementById('modal-tournament-name');
+    const channelEl = document.getElementById('modal-channel');
+    const commentatorEl = document.getElementById('modal-commentator');
+    const stadiumEl = document.getElementById('modal-stadium');
 
     matchCards.forEach(card => {
         card.addEventListener('click', () => {
-            const groupHeader = card.closest('.matches-group').querySelector('.group-header span');
-            if (groupHeader && tournamentTitle) {
-                tournamentTitle.innerText = "بطولة: " + groupHeader.innerText;
-            }
+            const tournament = card.getAttribute('data-tournament');
+            const channel = card.getAttribute('data-channel');
+            const commentator = card.getAttribute('data-commentator');
+            const stadium = card.getAttribute('data-stadium');
+
+            if (tournamentTitle) tournamentTitle.innerText = tournament;
+            if (channelEl) channelEl.innerText = channel;
+            if (commentatorEl) commentatorEl.innerText = commentator;
+            if (stadiumEl) stadiumEl.innerText = stadium;
+
             if (modal) {
-                modal.style.display = 'block';
+                modal.style.display = 'flex';
             }
         });
     });
@@ -32,11 +40,16 @@ function initApp() {
             modal.style.display = 'none';
         });
     }
+
+    window.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            modal.style.display = 'none';
+        }
+    });
 }
 
-// ميزة السحب والتنقل بين الأيام
+// تنقل الأيام
 function setupSwipeNavigation() {
-    const container = document.getElementById('swipe-container');
     const prevBtn = document.getElementById('prev-day');
     const nextBtn = document.getElementById('next-day');
     const dateText = document.getElementById('current-date-text');
@@ -58,17 +71,6 @@ function setupSwipeNavigation() {
 
     if (prevBtn) prevBtn.addEventListener('click', () => { if (currentIndex > 0) updateDate(--currentIndex); });
     if (nextBtn) nextBtn.addEventListener('click', () => { if (currentIndex < days.length - 1) updateDate(++currentIndex); });
-
-    let touchStartX = 0;
-    let touchEndX = 0;
-    if (container) {
-        container.addEventListener('touchstart', (e) => { touchStartX = e.changedTouches[0].screenX; }, {passive: true});
-        container.addEventListener('touchend', (e) => {
-            touchEndX = e.changedTouches[0].screenX;
-            if (touchEndX < touchStartX - 50 && currentIndex < days.length - 1) updateDate(++currentIndex);
-            if (touchEndX > touchStartX + 50 && currentIndex > 0) updateDate(--currentIndex);
-        }, {passive: true});
-    }
 }
 
 // التحديث التلقائي للنتائج الحية كل 30 ثانية
@@ -76,12 +78,13 @@ function setupLiveAutoRefresh() {
     setInterval(() => {
         const liveScores = document.querySelectorAll('.match-score.live');
         liveScores.forEach(score => {
-            // تأثير وميض خفيف يدل على التحديث الحي
-            score.style.opacity = '0.4';
+            score.style.transform = 'scale(1.06)';
+            score.style.borderColor = '#38bdf8';
             setTimeout(() => {
-                score.style.opacity = '1';
-            }, 500);
+                score.style.transform = 'scale(1)';
+                score.style.borderColor = 'rgba(239, 68, 68, 0.4)';
+            }, 600);
         });
-        console.log("تم تحديث النتائج الحية بنجاح (كل 30 ثانية).");
+        console.log("MatchDay AI: تم تحديث جميع النتائج الحية تلقائياً.");
     }, 30000);
 }
