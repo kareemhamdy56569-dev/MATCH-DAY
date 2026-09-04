@@ -5,8 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MatchDay AI - المباريات</title>
     <link rel="stylesheet" href="style.css">
-    <!-- FontAwesome للايقونات -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
 
@@ -20,18 +18,18 @@
     <!-- الهيدر العلوي والاختصارات -->
     <header class="app-header">
         <div class="top-bar">
-            <h1 class="logo">MatchDay AI <i class="fa-solid fa-bolt"></i></h1>
+            <h1 class="logo">MatchDay AI ⚡</h1>
             <div class="header-actions">
-                <button class="icon-btn" id="search-btn"><i class="fa-solid fa-search"></i></button>
-                <button class="icon-btn" id="filter-btn"><i class="fa-solid fa-filter"></i></button>
+                <button class="icon-btn" id="search-btn">🔍</button>
+                <button class="icon-btn" id="filter-btn">⚙️</button>
             </div>
         </div>
 
         <!-- شريط التنقل بين الأيام (اختصارات + سحب) -->
         <div class="date-navigator">
-            <button class="date-arrow-btn" id="prev-day"><i class="fa-solid fa-chevron-right"></i></button>
+            <button class="date-arrow-btn" id="prev-day">◀</button>
             <div class="date-display" id="current-date-text">الجمعة، 04/09/2026</div>
-            <button class="date-arrow-btn" id="next-day"><i class="fa-solid fa-chevron-left"></i></button>
+            <button class="date-arrow-btn" id="next-day">▶</button>
         </div>
     </header>
 
@@ -42,10 +40,10 @@
         <section class="matches-group favorites-section">
             <div class="group-header">
                 <span>المفضلة</span>
-                <i class="fa-solid fa-star active-star"></i>
+                <span class="star-icon">⭐</span>
             </div>
             <div id="favorites-list">
-                <!-- يتم تعبئتها ديناميكياً -->
+                <!-- مباريات المفضلة -->
             </div>
         </section>
 
@@ -55,18 +53,18 @@
             <div class="matches-group">
                 <div class="group-header">
                     <span>الدوري الإنجليزي</span>
-                    <i class="fa-solid fa-trophy"></i>
+                    <span>🏆</span>
                 </div>
                 <div class="match-card" data-match-id="1">
                     <div class="team home">
                         <span class="team-name">إبسويتش</span>
-                        <img src="https://resources.premierleague.com/premierleague/badges/70/t40.png" alt="Ipswich" onerror="this.src='https://via.placeholder.5.com/30'">
+                        <div class="team-dot" style="background: #3b82f6;"></div>
                     </div>
                     <div class="match-info">
                         <span class="match-time">10:00 م</span>
                     </div>
                     <div class="team away">
-                        <img src="https://resources.premierleague.com/premierleague/badges/70/t14.png" alt="Liverpool" onerror="this.src='https://via.placeholder.5.com/30'">
+                        <div class="team-dot" style="background: #ef4444;"></div>
                         <span class="team-name">ليفربول</span>
                     </div>
                 </div>
@@ -76,18 +74,18 @@
             <div class="matches-group">
                 <div class="group-header">
                     <span>الدوري الإسباني</span>
-                    <i class="fa-solid fa-trophy"></i>
+                    <span>🏆</span>
                 </div>
                 <div class="match-card" data-match-id="2">
                     <div class="team home">
                         <span class="team-name">ريال بيتيس</span>
-                        <img src="https://upload.wikimedia.org/wikipedia/en/1/13/Real_betis_logo.svg" alt="Betis" onerror="this.src='https://via.placeholder.com/30'">
+                        <div class="team-dot" style="background: #10b981;"></div>
                     </div>
                     <div class="match-info">
                         <span class="match-time">10:00 م</span>
                     </div>
                     <div class="team away">
-                        <img src="https://upload.wikimedia.org/wikipedia/en/5/56/Real_Madrid_CF.svg" alt="Real Madrid" onerror="this.src='https://via.placeholder.com/30'">
+                        <div class="team-dot" style="background: #eab308;"></div>
                         <span class="team-name">ريال مدريد</span>
                     </div>
                 </div>
@@ -99,15 +97,15 @@
             <div class="modal-content-box">
                 <div class="modal-top">
                     <h3 id="modal-tournament-name">اسم البطولة</h3>
-                    <button id="close-modal"><i class="fa-solid fa-xmark"></i></button>
+                    <button id="close-modal">✖</button>
                 </div>
                 <div class="ai-card-body">
-                    <h4><i class="fa-solid fa-wand-magic-sparkles"></i> محرك التوقعات الذكي</h4>
+                    <h4>✨ محرك التوقعات الذكي</h4>
                     <div class="prediction-bars">
-                        <div class="bar-item"><span>فوز الأهلي 55%</span><div class="progress"><div class="fill" style="width: 55%;"></div></div></div>
+                        <div class="bar-item"><span>فوز الفريق 55%</span><div class="progress"><div class="fill" style="width: 55%;"></div></div></div>
                         <div class="bar-item"><span>التعادل 25%</span><div class="progress"><div class="fill" style="width: 25%;"></div></div></div>
                     </div>
-                    <p class="ai-text">التحليل الفني: ضغط عالي متوقع من الأطراف، نسبة استحواذ الكرة ترجح كفة الفريق المضيف.</p>
+                    <p class="ai-text">التحليل الفني: ضغط عالي متوقع من الأطراف، نسبة استحواذ الكرة ترجح كفة الفريق المضيف في الدقائق المتبقية.</p>
                 </div>
             </div>
         </div>
@@ -116,11 +114,11 @@
 
     <!-- شريط التنقل السفلي -->
     <nav class="bottom-nav">
-        <a href="#" class="nav-item active"><i class="fa-solid fa-futbol"></i> المباريات</a>
-        <a href="#" class="nav-item"><i class="fa-solid fa-newspaper"></i> الأخبار</a>
-        <a href="#" class="nav-item"><i class="fa-solid fa-right-left"></i> الانتقالات</a>
-        <a href="#" class="nav-item"><i class="fa-solid fa-chart-bar"></i> الترتيب</a>
-        <a href="#" class="nav-item"><i class="fa-solid fa-bars"></i> المزيد</a>
+        <a href="#" class="nav-item active"><span>⚽</span> المباريات</a>
+        <a href="#" class="nav-item"><span>📰</span> الأخبار</a>
+        <a href="#" class="nav-item"><span>🔄</span> الانتقالات</a>
+        <a href="#" class="nav-item"><span>📊</span> الترتيب</a>
+        <a href="#" class="nav-item"><span>☰</span> المزيد</a>
     </nav>
 
     <script src="script.js"></script>
