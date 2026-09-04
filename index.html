@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MatchDay AI - المباريات</title>
+    <title>MatchDay AI - المباريات الرسمية</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -43,29 +43,64 @@
                 <span class="star-icon">⭐</span>
             </div>
             <div id="favorites-list">
-                <!-- مباريات المفضلة -->
+                <!-- مباريات المفضلة المضافة -->
             </div>
         </section>
 
-        <!-- قسم البطولات المجمعة -->
+        <!-- قسم البطولات المجمعة للمباريات الرسمية -->
         <div id="tournaments-container">
-            <!-- الدوري الإنجليزي -->
+            
+            <!-- دوري أبطال إفريقيا -->
             <div class="matches-group">
                 <div class="group-header">
-                    <span>الدوري الإنجليزي</span>
+                    <span>دوري أبطال إفريقيا - النهائي</span>
                     <span>🏆</span>
                 </div>
                 <div class="match-card" data-match-id="1">
                     <div class="team home">
-                        <span class="team-name">إبسويتش</span>
+                        <span class="team-name">الأهلي</span>
+                        <div class="team-dot" style="background: #ef4444;"></div>
+                    </div>
+                    <div class="match-info">
+                        <span class="match-score">1 - 2</span>
+                    </div>
+                    <div class="team away">
+                        <div class="team-dot" style="background: #ffffff;"></div>
+                        <span class="team-name">الزمالك</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- الدوري الإنجليزي الممتاز -->
+            <div class="matches-group">
+                <div class="group-header">
+                    <span>الدوري الإنجليزي الممتاز</span>
+                    <span>🏆</span>
+                </div>
+                <div class="match-card" data-match-id="2">
+                    <div class="team home">
+                        <span class="team-name">إبسويتش تاون</span>
                         <div class="team-dot" style="background: #3b82f6;"></div>
                     </div>
                     <div class="match-info">
                         <span class="match-time">10:00 م</span>
                     </div>
                     <div class="team away">
-                        <div class="team-dot" style="background: #ef4444;"></div>
+                        <div class="team-dot" style="background: #dc2626;"></div>
                         <span class="team-name">ليفربول</span>
+                    </div>
+                </div>
+                <div class="match-card" data-match-id="3">
+                    <div class="team home">
+                        <span class="team-name">مانشستر سيتي</span>
+                        <div class="team-dot" style="background: #60a5fa;"></div>
+                    </div>
+                    <div class="match-info">
+                        <span class="match-time">08:30 م</span>
+                    </div>
+                    <div class="team away">
+                        <div class="team-dot" style="background: #9ca3af;"></div>
+                        <span class="team-name">آرسنال</span>
                     </div>
                 </div>
             </div>
@@ -76,7 +111,7 @@
                     <span>الدوري الإسباني</span>
                     <span>🏆</span>
                 </div>
-                <div class="match-card" data-match-id="2">
+                <div class="match-card" data-match-id="4">
                     <div class="team home">
                         <span class="team-name">ريال بيتيس</span>
                         <div class="team-dot" style="background: #10b981;"></div>
@@ -85,11 +120,12 @@
                         <span class="match-time">10:00 م</span>
                     </div>
                     <div class="team away">
-                        <div class="team-dot" style="background: #eab308;"></div>
+                        <div class="team-dot" style="background: #fbbf24;"></div>
                         <span class="team-name">ريال مدريد</span>
                     </div>
                 </div>
             </div>
+
         </div>
 
         <!-- قسم تفاصيل المباراة والذكاء الاصطناعي (يظهر عند الضغط) -->
@@ -102,7 +138,7 @@
                 <div class="ai-card-body">
                     <h4>✨ محرك التوقعات الذكي</h4>
                     <div class="prediction-bars">
-                        <div class="bar-item"><span>فوز الفريق 55%</span><div class="progress"><div class="fill" style="width: 55%;"></div></div></div>
+                        <div class="bar-item"><span>فوز الفريق المضيف 55%</span><div class="progress"><div class="fill" style="width: 55%;"></div></div></div>
                         <div class="bar-item"><span>التعادل 25%</span><div class="progress"><div class="fill" style="width: 25%;"></div></div></div>
                     </div>
                     <p class="ai-text">التحليل الفني: ضغط عالي متوقع من الأطراف، نسبة استحواذ الكرة ترجح كفة الفريق المضيف في الدقائق المتبقية.</p>
