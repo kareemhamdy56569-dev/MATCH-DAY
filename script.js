@@ -1,84 +1,74 @@
-// قائمة الأندية والشعارات الخاصة بها
-const teamLogos = {
-    'الأهلي': 'https://upload.wikimedia.org/wikipedia/ar/8/8c/Ahly_SC_logo.svg',
-    'الزمالك': 'https://upload.wikimedia.org/wikipedia/ar/0/04/ZamalekSC.png',
-    'مانشستر سيتي': 'https://upload.wikimedia.org/wikipedia/en/e/eb/Manchester_City_FC_badge.svg',
-    'ليفربول': 'https://upload.wikimedia.org/wikipedia/en/0/0c/Liverpool_FC.svg',
-    'ريال مدريد': 'https://upload.wikimedia.org/wikipedia/en/5/56/Real_Madrid_CF.svg',
-    'برشلونة': 'https://upload.wikimedia.org/wikipedia/en/4/47/FC_Barcelona.svg'
-};
+// ==========================================
+//  MatchDay AI - Script
+// ==========================================
 
-// وظيفة جلب وتحديث بيانات المباريات
-function fetchLiveMatches() {
-    console.log("جاري تحديث بيانات المباريات...");
-    
-    // يمكن هنا ربط الـ API الخارجي مستقبلاً
-    // حالياً يتم استخدام هذه البنية لتحديث الواجهة تلقائياً
-    updateMatchUI();
-}
-
-// وظيفة التحكم في إظهار وإخفاء تفاصيل المباراة (Accordion/Toggle)
-function setupMatchToggle() {
-    document.querySelectorAll('.match-card').forEach(card => {
-        const scoreElement = card.querySelector('.match-score');
-        const detailsElement = card.querySelector('.match-details');
-        
-        if (scoreElement && detailsElement) {
-            // جعل كارت النتيجة كأنه زر قابل للضغط
-            scoreElement.style.cursor = 'pointer';
-            
-            scoreElement.addEventListener('click', () => {
-                // تبديل حالة العرض بين إخفاء وإظهار التفاصيل
-                if (detailsElement.style.display === 'none' || !detailsElement.style.display) {
-                    detailsElement.style.display = 'block';
-                } else {
-                    detailsElement.style.display = 'none';
-                }
-            });
-        }
-    });
-}
-
-// تحديث اختيار الفريق المفضل
-function setupTeamSelection() {
-    document.querySelectorAll('.team-option').forEach(option => {
-        option.addEventListener('click', (e) => {
-            const selectedTeam = e.target.getAttribute('data-team');
-            localStorage.setItem('userFavTeam', selectedTeam);
-            updateTeamUI(selectedTeam);
-            
-            const model = document.getElementById('team-modal');
-            if (model) {
-                model.style.display = 'none';
-            }
-        });
-    });
-}
-
-// تحديث واجهة الفريق المفضل
-function updateTeamUI(team) {
-    const favText = document.getElementById('fav-team-text');
-    const transferBox = document.getElementById('transfer-box');
-    
-    if (favText) {
-        favText.innerText = team;
-    }
-    if (transferBox) {
-        transferBox.innerHTML = `اخبار الانتقالات الخاصة بـ <strong>${team}</strong>`;
-    }
-}
-
-// تشغيل الوظائف عند تحميل الصفحة
+// 1. تشغيل الوظائف عند تحميل الصفحة
 window.onload = () => {
     fetchLiveMatches();
     setupMatchToggle();
     setupTeamSelection();
-    
-    const savedTeam = localStorage.getItem('userFavTeam');
-    if (savedTeam) {
-        updateTeamUI(savedTeam);
-    }
+    setupScoreClickToggle(); // تفعيل ميزة إظهار التحليل عند الضغط على النتيجة
 };
 
-// التحديث التلقائي المباشر كل 30 ثانية لتفادي استهلاك كوتا الـ API
-setInterval(fetchLiveMatches, 30000);
+// 2. محاكاة جلب بيانات المباريات
+function fetchLiveMatches() {
+    console.log("جاري تحميل بيانات المباريات...");
+}
+
+// 3. التنقل بين التبويبات (تحليل، تشكيل، إحصائيات...)
+function setupMatchToggle() {
+    const tabs = document.querySelectorAll('.tab-btn, .nav-tab');
+    tabs.forEach(tab => {
+        tab.addEventListener('click', (e) => {
+            tabs.forEach(t => t.classList.remove('active'));
+            e.target.classList.add('active');
+        });
+    });
+}
+
+// 4. تحديث واجهة الفريق المفضل
+function setupTeamSelection() {
+    const teamSelect = document.getElementById('team-select');
+    if (teamSelect) {
+        teamSelect.addEventListener('change', (e) => {
+            updateTeamUI(e.target.value);
+        });
+    }
+}
+
+function updateTeamUI(team) {
+    const favText = document.getElementById('fav-team-text');
+    const transferBox = document.getElementById('transfer-box');
+
+    if (favText) {
+        favText.innerText = team;
+    }
+    if (transferBox) {
+        transferBox.innerHTML = `أخبار الانتقالات الخاصة بـ <strong>${team}</strong>`;
+    }
+}
+
+// 5. إخفاء التحليل وإظهاره فقط عند الضغط على النتيجة
+function setupScoreClickToggle() {
+    // تحديد عنصر النتيجة وقسم التحليل
+    const scoreCard = document.querySelector('.score-board') || document.querySelector('.match-card') || document.querySelector('.score-display');
+    const aiSection = document.querySelector('.ai-analysis-section') || document.querySelector('.ai-section') || document.getElementById('ai-section');
+
+    if (aiSection) {
+        // إخفاء قسم التحليل افتراضياً عند بداية الفتح
+        aiSection.style.display = 'none';
+    }
+
+    if (scoreCard && aiSection) {
+        scoreCard.style.cursor = 'pointer';
+        scoreCard.title = "اضغط هنا لإظهار/إخفاء تحليل الذكاء الاصطناعي";
+
+        scoreCard.addEventListener('click', () => {
+            if (aiSection.style.display === 'none' || aiSection.style.display === '') {
+                aiSection.style.display = 'block';
+            } else {
+                aiSection.style.display = 'none';
+            }
+        });
+    }
+}
