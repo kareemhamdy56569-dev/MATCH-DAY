@@ -1,11 +1,10 @@
 // ==========================================
-// MatchDay AI - Clean Professional Script
+// MatchDay AI - Fast & Clean Script
 // ==========================================
 
 document.addEventListener("DOMContentLoaded", () => {
     initApp();
     setupSwipeNavigation();
-    setupAutoRefresh();
 });
 
 // تهيئة التطبيق والأحداث
@@ -17,7 +16,7 @@ function initApp() {
 
     // عند الضغط على أي مباراة، يظهر تحليلها واسم بطولتها
     matchCards.forEach(card => {
-        card.addEventListener('click', (e) => {
+        card.addEventListener('click', () => {
             const groupHeader = card.closest('.matches-group').querySelector('.group-header span');
             if (groupHeader && tournamentTitle) {
                 tournamentTitle.innerText = "بطولة: " + groupHeader.innerText;
@@ -36,14 +35,13 @@ function initApp() {
     }
 }
 
-// ميزة السحب (Swipe) يمين ويسار التنقل بين الأيام + أزرار الاختصار
+// ميزة السحب (Swipe) يمين ويسار للتنقل بين الأيام + أزرار الاختصار
 function setupSwipeNavigation() {
     const container = document.getElementById('swipe-container');
     const prevBtn = document.getElementById('prev-day');
     const nextBtn = document.getElementById('next-day');
     const dateText = document.getElementById('current-date-text');
 
-    // تواريخ تجريبية للتنقل السريع
     const days = [
         "الخميس، 03/09/2026",
         "الجمعة، 04/09/2026 (اليوم)",
@@ -54,13 +52,11 @@ function setupSwipeNavigation() {
     function updateDate(index) {
         if (dateText) {
             dateText.innerText = days[index];
-            // تأثير وميض خفيف عند التغيير
             dateText.style.opacity = '0.3';
             setTimeout(() => dateText.style.opacity = '1', 200);
         }
     }
 
-    // أزرار الاختصار فوق
     if (prevBtn) {
         prevBtn.addEventListener('click', () => {
             if (currentIndex > 0) {
@@ -79,7 +75,6 @@ function setupSwipeNavigation() {
         });
     }
 
-    // السحب باللمس (Touch Swipe) للأجهزة الذكية والموبايل
     let touchStartX = 0;
     let touchEndX = 0;
 
@@ -90,33 +85,18 @@ function setupSwipeNavigation() {
 
         container.addEventListener('touchend', (e) => {
             touchEndX = e.changedTouches[0].screenX;
-            handleSwipeGesture();
+            if (touchEndX < touchStartX - 50) {
+                if (currentIndex < days.length - 1) {
+                    currentIndex++;
+                    updateDate(currentIndex);
+                }
+            }
+            if (touchEndX > touchStartX + 50) {
+                if (currentIndex > 0) {
+                    currentIndex--;
+                    updateDate(currentIndex);
+                }
+            }
         }, {passive: true});
     }
-
-    function handleSwipeGesture() {
-        const threshold = 50; // الحد الأدنى لمسافة السحب
-        if (touchEndX < touchStartX - threshold) {
-            // سحب لليسار -> اليوم التالي (المباريات القادمة)
-            if (currentIndex < days.length - 1) {
-                currentIndex++;
-                updateDate(currentIndex);
-            }
-        }
-        if (touchEndX > touchStartX + threshold) {
-            // سحب لليمين -> اليوم السابق (المباريات التي انتهت)
-            if (currentIndex > 0) {
-                currentIndex--;
-                updateDate(currentIndex);
-            }
-        }
-    }
-}
-
-// التحديث التلقائي للمباريات كل 30 ثانية
-function setupAutoRefresh() {
-    setInterval(() => {
-        console.log("جاري تحديث النتائج الحية تلقائياً كل 30 ثانية...");
-        // هنا يمكن جلب بيانات الأهداف والنتائج الحية لاحقاً بدون إعادة تحميل الصفحة بالكامل
-    }, 30000);
 }
