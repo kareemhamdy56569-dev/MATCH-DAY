@@ -3,288 +3,580 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MatchDay AI - جدول المباريات الشامل (يلا شوت ستايل)</title>
-    <link rel="stylesheet" href="style.css">
+    <title>MatchDay AI - المنصة الشاملة للكرة العالمية</title>
+    <style>
+        :root {
+            --primary-color: #f43f5e;
+            --primary-hover: #e11d48;
+            --accent-purple: #8b5cf6;
+            --bg-dark: #070a14;
+            --card-bg: #111827;
+            --card-border: #1f2937;
+            --text-main: #f9fafb;
+            --text-muted: #9ca3af;
+            --live-green: #10b981;
+            --live-red: #ef4444;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            direction: rtl;
+            min-height: 100vh;
+            padding-bottom: 90px;
+            overflow-x: hidden;
+        }
+
+        /* الخلفية الجمالية المتحركة */
+        .pink-bubbles-bg {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: -1; overflow: hidden; opacity: 0.15;
+        }
+        .bubble {
+            position: absolute; border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-purple));
+            filter: blur(90px);
+        }
+        .b1 { width: 450px; height: 450px; top: -120px; right: -100px; }
+        .b2 { width: 550px; height: 550px; bottom: -150px; left: -150px; }
+
+        /* الهيدر العلوي */
+        .app-header {
+            background: rgba(7, 10, 20, 0.95);
+            backdrop-filter: blur(16px);
+            position: sticky; top: 0; z-index: 100;
+            border-bottom: 1px solid var(--card-border);
+        }
+        .top-bar {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 14px 20px;
+        }
+        .logo-area { display: flex; align-items: center; gap: 10px; }
+        .logo {
+            font-size: 1.5rem; font-weight: 900;
+            background: linear-gradient(45deg, #fb7185, #c084fc);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .live-badge {
+            background: rgba(239, 68, 68, 0.2); color: var(--live-red);
+            font-size: 0.7rem; font-weight: 800; padding: 3px 8px; border-radius: 6px;
+            border: 1px solid rgba(239, 68, 68, 0.4);
+        }
+        .header-actions { display: flex; gap: 10px; }
+        .icon-btn {
+            background: var(--card-bg); border: 1px solid var(--card-border);
+            color: var(--text-main); width: 38px; height: 38px; border-radius: 10px;
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: all 0.2s;
+        }
+        .icon-btn:hover { border-color: var(--primary-color); }
+
+        /* شريط البحث */
+        .search-bar-container {
+            padding: 10px 20px; background: rgba(17, 24, 39, 0.9);
+            border-bottom: 1px solid var(--card-border);
+        }
+        .search-bar-container input {
+            width: 100%; padding: 10px 16px; border-radius: 10px;
+            background: #030712; border: 1px solid var(--card-border);
+            color: var(--text-main); font-size: 0.9rem; outline: none;
+        }
+        .search-bar-container input:focus { border-color: var(--primary-color); }
+
+        /* شريط التنقل بين الأيام */
+        .date-navigator {
+            display: flex; justify-content: space-between; align-items: center;
+            background: var(--card-bg); padding: 10px 20px; border-top: 1px solid var(--card-border);
+        }
+        .date-arrow-btn {
+            background: none; border: none; color: var(--text-muted);
+            font-size: 0.85rem; font-weight: 700; cursor: pointer; padding: 6px 12px;
+            border-radius: 8px; transition: all 0.2s;
+        }
+        .date-arrow-btn:hover { background: rgba(255,255,255,0.06); color: var(--text-main); }
+        .date-display-box { text-align: center; display: flex; flex-direction: column; gap: 2px; }
+        #current-day-name { font-size: 1rem; font-weight: 800; color: #fff; }
+        .sub-date { font-size: 0.75rem; color: var(--text-muted); }
+
+        /* شريط فلترة البطولات */
+        .leagues-filter-bar {
+            display: flex; gap: 8px; padding: 10px 20px; overflow-x: auto;
+            background: rgba(7, 10, 20, 0.9); border-bottom: 1px solid var(--card-border);
+            scrollbar-width: none;
+        }
+        .leagues-filter-bar::-webkit-scrollbar { display: none; }
+        .league-pill {
+            background: var(--card-bg); border: 1px solid var(--card-border);
+            color: var(--text-muted); padding: 6px 14px; border-radius: 20px;
+            font-size: 0.8rem; font-weight: 600; cursor: pointer; white-space: nowrap;
+            transition: all 0.2s;
+        }
+        .league-pill.active, .league-pill:hover {
+            background: var(--primary-color); color: #fff; border-color: var(--primary-color);
+        }
+
+        /* المحتوى الرئيسي */
+        .main-container { padding: 20px; max-width: 800px; margin: 0 auto; }
+
+        /* مجموعات المباريات */
+        .matches-group {
+            background: var(--card-bg); border: 1px solid var(--card-border);
+            border-radius: 16px; margin-bottom: 20px; overflow: hidden;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+        }
+        .group-header {
+            background: rgba(17, 24, 39, 0.95); padding: 12px 18px;
+            font-size: 0.95rem; font-weight: 700; display: flex;
+            justify-content: space-between; align-items: center;
+            border-bottom: 1px solid var(--card-border); color: #e5e7eb;
+        }
+        .match-card {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 16px 18px; border-bottom: 1px solid rgba(31, 41, 55, 0.6);
+            cursor: pointer; transition: background 0.2s;
+        }
+        .match-card:last-child { border-bottom: none; }
+        .match-card:hover { background: rgba(31, 41, 55, 0.5); }
+
+        .team { display: flex; align-items: center; gap: 12px; flex: 1; }
+        .team.home { justify-content: flex-end; text-align: left; }
+        .team.away { justify-content: flex-start; text-align: right; }
+        .team-name { font-size: 0.95rem; font-weight: 700; max-width: 130px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .team-icon { font-size: 1.3rem; }
+
+        .match-info { display: flex; flex-direction: column; align-items: center; padding: 0 16px; min-width: 110px; }
+        .match-score {
+            font-size: 1.15rem; font-weight: 900; background: #030712;
+            padding: 6px 16px; border-radius: 10px; border: 1px solid var(--card-border);
+            letter-spacing: 1px;
+        }
+        .match-score.live {
+            color: var(--live-red); border-color: rgba(239, 68, 68, 0.5);
+            animation: live-pulse 1.5s infinite;
+        }
+        .match-time { font-size: 0.85rem; font-weight: 700; color: var(--text-muted); }
+        .match-status-text { font-size: 0.75rem; color: var(--live-green); margin-top: 4px; font-weight: 700; }
+
+        @keyframes live-pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.04); opacity: 0.8; }
+            100% { transform: scale(1); }
+        }
+
+        /* أقسام الأخبار، الانتقالات والترتيب */
+        .section-title {
+            font-size: 1.25rem; font-weight: 900; margin-bottom: 18px; color: #fff;
+            border-right: 4px solid var(--primary-color); padding-right: 12px;
+        }
+        .news-card, .transfer-card, .standings-box {
+            background: var(--card-bg); border: 1px solid var(--card-border);
+            border-radius: 14px; padding: 18px; margin-bottom: 16px;
+        }
+        .news-card h3 { font-size: 1.05rem; margin-bottom: 8px; color: #fff; font-weight: 800; }
+        .news-card p { font-size: 0.9rem; color: var(--text-muted); line-height: 1.6; }
+        .news-time { font-size: 0.75rem; color: #38bdf8; margin-top: 10px; display: block; font-weight: 700; }
+
+        table { width: 100%; border-collapse: collapse; text-align: center; font-size: 0.9rem; }
+        th, td { padding: 12px 8px; border-bottom: 1px solid var(--card-border); }
+        th { background: rgba(17, 24, 39, 0.95); color: var(--text-muted); font-weight: 800; }
+        td { color: #f3f4f6; font-weight: 600; }
+
+        /* مودال التفاصيل والشات */
+        .ai-modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(8px);
+            z-index: 200; display: flex; justify-content: center; align-items: center; padding: 16px;
+        }
+        .modal-content-box {
+            background: var(--card-bg); border: 1px solid var(--card-border);
+            width: 100%; max-width: 520px; max-height: 90vh; border-radius: 20px;
+            overflow: hidden; display: flex; flex-direction: column;
+        }
+        .modal-top {
+            background: #030712; padding: 16px 20px; display: flex;
+            justify-content: space-between; align-items: center; border-bottom: 1px solid var(--card-border);
+        }
+        .modal-top h3 { font-size: 1.1rem; color: #fff; font-weight: 800; }
+        #close-modal-btn { background: none; border: none; color: var(--text-muted); font-size: 1.3rem; cursor: pointer; }
+        .modal-body-scroll { padding: 20px; overflow-y: auto; flex: 1; }
+
+        .teams-header-duel {
+            display: flex; justify-content: space-between; align-items: center;
+            background: rgba(3, 7, 18, 0.6); padding: 16px; border-radius: 12px;
+            border: 1px solid var(--card-border); margin-bottom: 16px;
+        }
+        .duel-team { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 1.05rem; }
+        .duel-vs { font-weight: 900; color: var(--primary-color); font-size: 1.2rem; }
+
+        .modal-meta-box {
+            background: rgba(3, 7, 18, 0.5); border: 1px solid var(--card-border);
+            padding: 14px; border-radius: 12px; margin-bottom: 16px;
+        }
+        .meta-row { font-size: 0.9rem; color: #d1d5db; margin-bottom: 8px; display: flex; justify-content: space-between; }
+        .analysis-section-block { background: rgba(56, 189, 248, 0.04); border: 1px solid rgba(56, 189, 248, 0.15); padding: 16px; border-radius: 12px; margin-bottom: 16px; }
+        .analysis-section-block h4 { font-size: 0.95rem; color: #38bdf8; margin-bottom: 12px; font-weight: 800; }
+        .prediction-bars { margin-bottom: 12px; }
+        .bar-labels { display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 6px; font-weight: 700; }
+        .progress { background: #030712; height: 10px; border-radius: 5px; overflow: hidden; border: 1px solid var(--card-border); }
+        .fill-home { background: linear-gradient(90deg, #3b82f6, #ec4899); height: 100%; border-radius: 5px; }
+        .ai-insight-text { font-size: 0.9rem; line-height: 1.6; color: #e5e7eb; }
+
+        /* شريط التنقل السفلي */
+        .bottom-nav {
+            position: fixed; bottom: 0; left: 0; width: 100%;
+            background: rgba(7, 10, 20, 0.98); backdrop-filter: blur(16px);
+            border-top: 1px solid var(--card-border); display: flex; justify-content: space-around;
+            padding: 10px 0; z-index: 100;
+        }
+        .nav-item {
+            background: none; border: none; display: flex; flex-direction: column;
+            align-items: center; color: var(--text-muted); font-size: 0.75rem; font-weight: 700;
+            gap: 4px; cursor: pointer; transition: color 0.2s;
+        }
+        .nav-item span { font-size: 1.25rem; }
+        .nav-item.active, .nav-item:hover { color: var(--primary-color); }
+    </style>
 </head>
 <body>
 
-    <!-- خلفية البينك الجمالية -->
     <div class="pink-bubbles-bg">
         <div class="bubble b1"></div>
         <div class="bubble b2"></div>
-        <div class="bubble b3"></div>
     </div>
 
-    <!-- الهيدر العلوي -->
     <header class="app-header">
         <div class="top-bar">
-            <h1 class="logo">MatchDay AI ⚡</h1>
+            <div class="logo-area">
+                <h1 class="logo">MatchDay AI ⚡</h1>
+                <span class="live-badge">LIVE PRO</span>
+            </div>
             <div class="header-actions">
-                <button class="icon-btn" id="search-btn" title="بحث">🔍</button>
-                <button class="icon-btn" id="filter-btn" title="الإعدادات">⚙️</button>
+                <button class="icon-btn" id="search-toggle-btn" title="بحث">🔍</button>
             </div>
         </div>
 
-        <!-- شريط التنقل بين الأيام -->
-        <div class="date-navigator">
-            <button class="date-arrow-btn" id="prev-day">◀ الأمس</button>
-            <div class="date-display" id="current-date-text">الجمعة، 04/09/2026</div>
-            <button class="date-arrow-btn" id="next-day">الغد ▶</button>
+        <div class="search-bar-container" id="search-container" style="display: none;">
+            <input type="text" id="global-search-input" placeholder="ابحث عن فريق أو بطولة...">
+        </div>
+
+        <div class="date-navigator" id="date-nav-bar">
+            <button class="date-arrow-btn" id="prev-day">◀ السابق</button>
+            <div class="date-display-box">
+                <span id="current-day-name">الجمعة</span>
+                <span id="current-date-text" class="sub-date">04 سبتمبر 2026</span>
+            </div>
+            <button class="date-arrow-btn" id="next-day">التالي ▶</button>
+        </div>
+
+        <div class="leagues-filter-bar" id="leagues-filter-bar">
+            <button class="league-pill active" data-league="all">الكل 🌍</button>
+            <button class="league-pill" data-league="premier">البريميرليج 🏴󠁧󠁢󠁥󠁮󠁧󠁿</button>
+            <button class="league-pill" data-league="laliga">الليغا 🇪🇸</button>
+            <button class="league-pill" data-league="caf">أبطال إفريقيا 🦁</button>
         </div>
     </header>
 
-    <!-- المحتوى الرئيسي -->
-    <main class="main-container" id="swipe-container">
-
-        <!-- جدول البطولات والمباريات -->
-        <div id="tournaments-container">
-            
-            <!-- دوري أبطال إفريقيا -->
-            <div class="matches-group">
-                <div class="group-header">
-                    <span>دوري أبطال إفريقيا - النهائي</span>
-                    <span>🏆</span>
-                </div>
-                <div class="match-card" data-match-id="1" data-tournament="دوري أبطال إفريقيا - النهائي" data-channel="beIN Sports HD 4" data-commentator="حليم الدراجي" data-stadium="ستاد القاهرة الدولي">
-                    <div class="team home">
-                        <span class="team-name">الأهلي</span>
-                        <span class="team-icon">🦅</span>
-                    </div>
-                    <div class="match-info">
-                        <span class="match-score live">2 - 1</span>
-                        <span class="match-status-text">78' (شوط ثان)</span>
-                    </div>
-                    <div class="team away">
-                        <span class="team-icon">🐎</span>
-                        <span class="team-name">الزمالك</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- الدوري المصري الممتاز -->
-            <div class="matches-group">
-                <div class="group-header">
-                    <span>الدوري المصري الممتاز</span>
-                    <span>🇪🇬</span>
-                </div>
-                <div class="match-card" data-match-id="2" data-tournament="الدوري المصري الممتاز" data-channel="OnTime Sports 1" data-commentator="مؤمن حسن" data-stadium="ستاد الإسكندرية">
-                    <div class="team home">
-                        <span class="team-name">الاتحاد السكندري</span>
-                        <span class="team-icon">🟢</span>
-                    </div>
-                    <div class="match-info">
-                        <span class="match-score live">0 - 0</span>
-                        <span class="match-status-text">35' (شوط أول)</span>
-                    </div>
-                    <div class="team away">
-                        <span class="team-icon">🚂</span>
-                        <span class="team-name">المصري البورسعيدي</span>
-                    </div>
-                </div>
-                <div class="match-card" data-match-id="3" data-tournament="الدوري المصري الممتاز" data-channel="OnTime Sports 2" data-commentator="بلال علام" data-stadium="ستاد القاهرة">
-                    <div class="team home">
-                        <span class="team-name">بيراميدز</span>
-                        <span class="team-icon">🔵</span>
-                    </div>
-                    <div class="match-info">
-                        <span class="match-time">08:00 م</span>
-                        <span class="match-status-text" style="color:var(--text-muted)">لم تبدأ</span>
-                    </div>
-                    <div class="team away">
-                        <span class="team-icon">🦁</span>
-                        <span class="team-name">سيراميكا كليوباترا</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- الدوري الإنجليزي الممتاز -->
-            <div class="matches-group">
-                <div class="group-header">
-                    <span>الدوري الإنجليزي الممتاز (Premier League)</span>
-                    <span>🏴󠁧󠁢󠁥󠁮󠁧󠁿</span>
-                </div>
-                <div class="match-card" data-match-id="4" data-tournament="الدوري الإنجليزي الممتاز" data-channel="beIN Sports HD 1" data-commentator="عصام الشوالي" data-stadium="بورتمان رود">
-                    <div class="team home">
-                        <span class="team-name">إبسويتش تاون</span>
-                        <span class="team-icon">🚜</span>
-                    </div>
-                    <div class="match-info">
-                        <span class="match-score live">0 - 2</span>
-                        <span class="match-status-text">89' (مباشر)</span>
-                    </div>
-                    <div class="team away">
-                        <span class="team-icon">🔴</span>
-                        <span class="team-name">ليفربول</span>
-                    </div>
-                </div>
-                <div class="match-card" data-match-id="5" data-tournament="الدوري الإنجليزي الممتاز" data-channel="beIN Sports HD 1" data-commentator="حفيظ دراجي" data-stadium="الاتحاد">
-                    <div class="team home">
-                        <span class="team-name">مانشستر سيتي</span>
-                        <span class="team-icon">🩵</span>
-                    </div>
-                    <div class="match-info">
-                        <span class="match-time">09:30 م</span>
-                        <span class="match-status-text" style="color:var(--text-muted)">لم تبدأ</span>
-                    </div>
-                    <div class="team away">
-                        <span class="team-icon">⚪</span>
-                        <span class="team-name">آرسنال</span>
-                    </div>
-                </div>
-                <div class="match-card" data-match-id="6" data-tournament="الدوري الإنجليزي الممتاز" data-channel="beIN Sports HD 2" data-commentator="حسن العيدروس" data-stadium="أولد ترافورد">
-                    <div class="team home">
-                        <span class="team-name">مانشستر يونايتد</span>
-                        <span class="team-icon">👹</span>
-                    </div>
-                    <div class="match-info">
-                        <span class="match-time">10:00 م</span>
-                        <span class="match-status-text" style="color:var(--text-muted)">لم تبدأ</span>
-                    </div>
-                    <div class="team away">
-                        <span class="team-icon">🦁</span>
-                        <span class="team-name">تشيلسي</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- الدوري الإسباني -->
-            <div class="matches-group">
-                <div class="group-header">
-                    <span>الدوري الإسباني (La Liga)</span>
-                    <span>🇪🇸</span>
-                </div>
-                <div class="match-card" data-match-id="7" data-tournament="الدوري الإسباني" data-channel="beIN Sports HD 3" data-commentator="علي محمد علي" data-stadium="بينيتو فيامارين">
-                    <div class="team home">
-                        <span class="team-name">ريال بيتيس</span>
-                        <span class="team-icon">🟢</span>
-                    </div>
-                    <div class="match-info">
-                        <span class="match-time">10:00 م</span>
-                        <span class="match-status-text" style="color:var(--text-muted)">لم تبدأ</span>
-                    </div>
-                    <div class="team away">
-                        <span class="team-icon">👑</span>
-                        <span class="team-name">ريال مدريد</span>
-                    </div>
-                </div>
-                <div class="match-card" data-match-id="8" data-tournament="الدوري الإسباني" data-channel="beIN Sports HD 3" data-commentator="خالد الحدي" data-stadium="مونتجويك">
-                    <div class="team home">
-                        <span class="team-name">برشلونة</span>
-                        <span class="team-icon">🔵🔴</span>
-                    </div>
-                    <div class="match-info">
-                        <span class="match-time">11:00 م</span>
-                        <span class="match-status-text" style="color:var(--text-muted)">لم تبدأ</span>
-                    </div>
-                    <div class="team away">
-                        <span class="team-icon">⚪🔵</span>
-                        <span class="team-name">اتلتيكو مدريد</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- الدوري الإيطالي -->
-            <div class="matches-group">
-                <div class="group-header">
-                    <span>الدوري الإيطالي (Serie A)</span>
-                    <span>🇮🇹</span>
-                </div>
-                <div class="match-card" data-match-id="9" data-tournament="الدوري الإيطالي" data-channel="AD Sports 1" data-commentator="عامر عبدالله" data-stadium="سان سيرو">
-                    <div class="team home">
-                        <span class="team-name">إنتر ميلان</span>
-                        <span class="team-icon">🐍</span>
-                    </div>
-                    <div class="match-info">
-                        <span class="match-time">09:45 م</span>
-                        <span class="match-status-text" style="color:var(--text-muted)">لم تبدأ</span>
-                    </div>
-                    <div class="team away">
-                        <span class="team-icon">🦓</span>
-                        <span class="team-name">يوفنتوس</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- الدوري الألماني -->
-            <div class="matches-group">
-                <div class="group-header">
-                    <span>الدوري الألماني (Bundesliga)</span>
-                    <span>🇩🇪</span>
-                </div>
-                <div class="match-card" data-match-id="10" data-tournament="الدوري الألماني" data-channel="beIN Sports HD 5" data-commentator="خليل البلوشي" data-stadium="أليانز أرينا">
-                    <div class="team home">
-                        <span class="team-name">بايرن ميونخ</span>
-                        <span class="team-icon">🔴</span>
-                    </div>
-                    <div class="match-info">
-                        <span class="match-time">09:30 م</span>
-                        <span class="match-status-text" style="color:var(--text-muted)">لم تبدأ</span>
-                    </div>
-                    <div class="team away">
-                        <span class="team-icon">🟡</span>
-                        <span class="team-name">دورتموند</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- الدوري الفرنسي -->
-            <div class="matches-group">
-                <div class="group-header">
-                    <span>الدوري الفرنسي (Ligue 1)</span>
-                    <span>🇫🇷</span>
-                </div>
-                <div class="match-card" data-match-id="11" data-tournament="الدوري الفرنسي" data-channel="beIN Sports HD 4" data-commentator="جواد بدة" data-stadium="بارك دي برينس">
-                    <div class="team home">
-                        <span class="team-name">باريس سان جيرمان</span>
-                        <span class="team-icon">🗼</span>
-                    </div>
-                    <div class="match-info">
-                        <span class="match-time">10:00 م</span>
-                        <span class="match-status-text" style="color:var(--text-muted)">لم تبدأ</span>
-                    </div>
-                    <div class="team away">
-                        <span class="team-icon">⚓</span>
-                        <span class="team-name">مارسيليا</span>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-
-        <!-- مودال تفاصيل الماتش والتحليل الذكي -->
-        <div id="match-details-modal" class="ai-analysis-section" style="display: none;">
-            <div class="modal-content-box">
-                <div class="modal-top">
-                    <h3 id="modal-tournament-name">تفاصيل المباراة</h3>
-                    <button id="close-modal">✖</button>
-                </div>
-                <div class="ai-card-body">
-                    <div class="modal-meta-box">
-                        <div class="meta-row"><span>📺 القناة الناقلة:</span> <strong id="modal-channel">-</strong></div>
-                        <div class="meta-row"><span>🎙️ المعلق:</span> <strong id="modal-commentator">-</strong></div>
-                        <div class="meta-row"><span>🏟️ الملعب:</span> <strong id="modal-stadium">-</strong></div>
-                    </div>
-                    <h4>✨ محرك التوقعات والتحليل الفني</h4>
-                    <div class="prediction-bars">
-                        <div class="bar-item"><span>استحواذ الفريق المضيف (55%)</span><div class="progress"><div class="fill" style="width: 55%;"></div></div></div>
-                        <div class="bar-item"><span>استحواذ الفريق الضيف (45%)</span><div class="progress"><div class="fill" style="width: 45%;"></div></div></div>
-                    </div>
-                    <p class="ai-text" id="modal-ai-text">التحليل الذكي: نسق اللقاء مرتفع جداً، مع توقعات بضغط هجومي مكثف من الأطراف وخلق فرص محققة للتسجيل.</p>
-                </div>
-            </div>
-        </div>
-
+    <main class="main-container" id="main-content-area">
+        <!-- المحتوى يتغير ديناميكياً -->
     </main>
 
-    <!-- شريط التنقل السفلي -->
+    <!-- مودال تفاصيل الماتش -->
+    <div id="match-details-modal" class="ai-modal-overlay" style="display: none;">
+        <div class="modal-content-box">
+            <div class="modal-top">
+                <h3 id="modal-tournament-title">تحليل الذكاء الاصطناعي</h3>
+                <button id="close-modal-btn">✖</button>
+            </div>
+            <div class="modal-body-scroll">
+                <div class="teams-header-duel">
+                    <div class="duel-team"><span id="modal-home-icon">⚽</span><span id="modal-home-name">-</span></div>
+                    <div class="duel-vs">VS</div>
+                    <div class="duel-team"><span id="modal-away-icon">⚽</span><span id="modal-away-name">-</span></div>
+                </div>
+
+                <div class="modal-meta-box">
+                    <div class="meta-row"><span>📺 القناة:</span> <strong id="modal-channel">-</strong></div>
+                    <div class="meta-row"><span>🎙️ المعلق:</span> <strong id="modal-commentator">-</strong></div>
+                    <div class="meta-row"><span>🏟️ الملعب:</span> <strong id="modal-stadium">-</strong></div>
+                </div>
+
+                <div class="analysis-section-block">
+                    <h4>📊 إحصائيات التوقع</h4>
+                    <div class="prediction-bars">
+                        <div class="bar-labels"><span id="home-prob-text">فوز المضيف (50%)</span><span id="away-prob-text">فوز الضيف (50%)</span></div>
+                        <div class="progress"><div class="fill-home" id="home-progress-bar" style="width: 50%;"></div></div>
+                    </div>
+                    <p class="ai-insight-text" id="modal-ai-text">جاري التحليل الفني...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <nav class="bottom-nav">
-        <a href="#" class="nav-item active"><span>⚽</span> المباريات</a>
-        <a href="#" class="nav-item"><span>📰</span> الأخبار</a>
-        <a href="#" class="nav-item"><span>🔄</span> الانتقالات</a>
-        <a href="#" class="nav-item"><span>📊</span> الترتيب</a>
-        <a href="#" class="nav-item"><span>☰</span> المزيد</a>
+        <button class="nav-item active" data-tab="matches"><span>⚽</span> المباريات</button>
+        <button class="nav-item" data-tab="news"><span>📰</span> الأخبار</button>
+        <button class="nav-item" data-tab="transfers"><span>🔄</span> الانتقالات</button>
+        <button class="nav-item" data-tab="standings"><span>📊</span> الترتيب</button>
+        <button class="nav-item" data-tab="more"><span>☰</span> المزيد</button>
     </nav>
 
-    <script src="script.js"></script>
+    <script>
+        const weeklyMatchesDatabase = {
+            0: {
+                dayName: "الخميس", dateStr: "03 سبتمبر 2026",
+                tournaments: [{
+                    leagueKey: "caf", name: "تصفيات أمم إفريقيا 🏆",
+                    matches: [
+                        { home: "مصر", homeIcon: "🇪🇬", away: "إثيوبيا", awayIcon: "🦁", score: "3 - 0", status: "انتهت", time: "09:00 م", channel: "OnTime Sports 1", commentator: "مدحت شلبي", stadium: "ستاد القاهرة", homeProb: 75, awayProb: 25 },
+                        { home: "المغرب", homeIcon: "🇲🇦", away: "الكونغو", awayIcon: "🐆", score: "2 - 0", status: "انتهت", time: "10:00 م", channel: "Arryadia", commentator: "هشام فرج", stadium: "مركب محمد الخامس", homeProb: 80, awayProb: 20 }
+                    ]
+                }]
+            },
+            1: {
+                dayName: "الجمعة", dateStr: "04 سبتمبر 2026 (اليوم)",
+                tournaments: [
+                    {
+                        leagueKey: "caf", name: "دوري أبطال إفريقيا 🏆",
+                        matches: [{ home: "الأهلي", homeIcon: "🦅", away: "الزمالك", awayIcon: "🐎", score: "2 - 1", status: "78' (مباشر)", time: "09:00 م", channel: "beIN Sports HD 4", commentator: "حليم الدراجي", stadium: "ستاد القاهرة", homeProb: 55, awayProb: 45 }]
+                    },
+                    {
+                        leagueKey: "premier", name: "الدوري الإنجليزي الممتاز 🏴󠁧󠁢󠁥󠁮󠁧󠁿",
+                        matches: [
+                            { home: "إبسويتش تاون", homeIcon: "🚜", away: "ليفربول", awayIcon: "🔴", score: "0 - 2", status: "89' (مباشر)", time: "08:30 م", channel: "beIN Sports HD 1", commentator: "عصام الشوالي", stadium: "بورتمان رود", homeProb: 20, awayProb: 80 },
+                            { home: "مانشستر سيتي", homeIcon: "🩵", away: "آرسنال", awayIcon: "⚪", score: "1 - 1", status: "مباشر 65'", time: "10:30 م", channel: "beIN Sports HD 1", commentator: "حفيظ دراجي", stadium: "الاتحاد", homeProb: 52, awayProb: 48 }
+                        ]
+                    },
+                    {
+                        leagueKey: "laliga", name: "الدوري الإسباني 🇪🇸",
+                        matches: [{ home: "ريال بيتيس", homeIcon: "🟢", away: "ريال مدريد", awayIcon: "👑", score: "0 - 0", status: "لم تبدأ", time: "10:00 م", channel: "beIN Sports HD 3", commentator: "علي محمد علي", stadium: "بينيتو فيامارين", homeProb: 35, awayProb: 65 }]
+                    }
+                ]
+            },
+            2: {
+                dayName: "السبت", dateStr: "05 سبتمبر 2026",
+                tournaments: [
+                    {
+                        leagueKey: "premier", name: "الدوري الإنجليزي الممتاز 🏴󠁧󠁢󠁥󠁮󠁧󠁿",
+                        matches: [
+                            { home: "مانشستر يونايتد", homeIcon: "👹", away: "تشيلسي", awayIcon: "🦁", score: "0 - 0", status: "لم تبدأ", time: "03:30 ص", channel: "beIN Sports HD 1", commentator: "حسن العيدروس", stadium: "أولد ترافورد", homeProb: 50, awayProb: 50 },
+                            { home: "توتنهام", homeIcon: "⚪", away: "نيوكاسل", awayIcon: "🦅", score: "0 - 0", status: "لم تبدأ", time: "06:00 م", channel: "beIN Sports HD 2", commentator: "خليل البلوشي", stadium: "توتنهام", homeProb: 55, awayProb: 45 }
+                        ]
+                    },
+                    {
+                        leagueKey: "laliga", name: "الدوري الإسباني 🇪🇸",
+                        matches: [{ home: "برشلونة", homeIcon: "🔵🔴", away: "اتلتيكو مدريد", awayIcon: "⚪🔵", score: "0 - 0", status: "لم تبدأ", time: "10:00 م", channel: "beIN Sports HD 3", commentator: "خالد الحدي", stadium: "مونتجويك", homeProb: 58, awayProb: 42 }]
+                    }
+                ]
+            },
+            3: {
+                dayName: "الأحد", dateStr: "06 سبتمبر 2026",
+                tournaments: [{
+                    leagueKey: "premier", name: "الدوري الإنجليزي الممتاز 🏴󠁧󠁢󠁥󠁮󠁧󠁿",
+                    matches: [{ home: "أستون فيلا", homeIcon: "🟣", away: "برايتون", awayIcon: "🔵", score: "0 - 0", status: "لم تبدأ", time: "04:00 م", channel: "beIN Sports HD 1", commentator: "عامر عبدالله", stadium: "فيلا بارك", homeProb: 54, awayProb: 46 }]
+                }]
+            }
+        };
+
+        let currentDayIndex = 1;
+        let selectedLeagueFilter = 'all';
+
+        document.addEventListener("DOMContentLoaded", () => {
+            initNavigationTabs();
+            renderMatchesView();
+            initLeaguesFilter();
+            initSearchEngine();
+        });
+
+        function initNavigationTabs() {
+            const navButtons = document.querySelectorAll('.bottom-nav .nav-item');
+            navButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    navButtons.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    renderTabContent(btn.getAttribute('data-tab'));
+                });
+            });
+        }
+
+        function renderTabContent(tabName) {
+            const mainArea = document.getElementById('main-content-area');
+            const dateNavBar = document.getElementById('date-nav-bar');
+            const filterBar = document.getElementById('leagues-filter-bar');
+
+            if (tabName === 'matches') {
+                dateNavBar.style.display = 'flex';
+                filterBar.style.display = 'flex';
+                renderMatchesView();
+            } else {
+                dateNavBar.style.display = 'none';
+                filterBar.style.display = 'none';
+
+                if (tabName === 'news') {
+                    mainArea.innerHTML = `
+                        <h2 class="section-title">آخر الأخبار الرياضية 📰</h2>
+                        <div class="news-card">
+                            <h3>🔥 الفيفا يعلن رسمياً نظام مونديال الأندية الجديد</h3>
+                            <p>أكد الاتحاد الدولي لكرة القدم تفاصيل النسخة القادمة بمشاركة 32 فريقاً.</p>
+                            <span class="news-time">منذ 10 دقائق</span>
+                        </div>
+                        <div class="news-card">
+                            <h3>⚡ ريال مدريد يحسم برنامج تأهيل نجمه</h3>
+                            <p>الجهاز الطبي يؤكد جاهزية اللاعب للمواجهة القادمة بالدوري.</p>
+                            <span class="news-time">منذ ساعة</span>
+                        </div>
+                    `;
+                } else if (tabName === 'transfers') {
+                    mainArea.innerHTML = `
+                        <h2 class="section-title">سوق الانتقالات الصيفية 🔄</h2>
+                        <div class="transfer-card">
+                            <h3>🚀 ليفربول يقترب من صفقة هجومية كبرى</h3>
+                            <p>المفاوضات تبلغ مراحلها النهائية قبل إغلاق الميركاتو.</p>
+                            <span class="news-time">حالة الصفقة: متقدمة (90%) ✅</span>
+                        </div>
+                        <div class="transfer-card">
+                            <h3>✈️ نجم الكالتشيو يودع ناديه</h3>
+                            <p>المدافع يوقع رسمياً عقداً معاراً لناديه الجديد.</p>
+                            <span class="news-time">حالة الصفقة: تمت بنجاح 🔥</span>
+                        </div>
+                    `;
+                } else if (tabName === 'standings') {
+                    mainArea.innerHTML = `
+                        <h2 class="section-title">ترتيب الدوري الإنجليزي 📊</h2>
+                        <div class="standings-box">
+                            <table>
+                                <thead><tr><th>المركز</th><th>الفريق</th><th>لعب</th><th>نقاط</th></tr></thead>
+                                <tbody>
+                                    <tr><td>1</td><td>مانشستر سيتي</td><td>3</td><td>9</td></tr>
+                                    <tr><td>2</td><td>ليفربول</td><td>3</td><td>9</td></tr>
+                                    <tr><td>3</td><td>آرسنال</td><td>3</td><td>7</td></tr>
+                                    <tr><td>4</td><td>تشيلسي</td><td>3</td><td>6</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    `;
+                } else if (tabName === 'more') {
+                    mainArea.innerHTML = `
+                        <h2 class="section-title">المزيد ⚙️</h2>
+                        <div class="news-card">
+                            <h3>🤖 حول التطبيق</h3>
+                            <p>منصة رياضية متكاملة لمتابعة المباريات والأخبار الحصرية.</p>
+                        </div>
+                    `;
+                }
+            }
+        }
+
+        function renderMatchesView() {
+            const mainArea = document.getElementById('main-content-area');
+            const dayNameEl = document.getElementById('current-day-name');
+            const dateTextEl = document.getElementById('current-date-text');
+
+            const dayData = weeklyMatchesDatabase[currentDayIndex];
+            if (!dayData) return;
+
+            dayNameEl.innerText = dayData.dayName;
+            dateTextEl.innerText = dayData.dateStr;
+
+            let htmlContent = '';
+            dayData.tournaments.forEach(tour => {
+                if (selectedLeagueFilter !== 'all' && tour.leagueKey !== selectedLeagueFilter) return;
+
+                htmlContent += `<div class="matches-group"><div class="group-header"><span>${tour.name}</span><span>⭐</span></div>`;
+                tour.matches.forEach(match => {
+                    const isLive = match.status.includes('مباشر') || match.status.includes('شوط');
+                    htmlContent += `
+                        <div class="match-card" data-tour="${tour.name}" data-home="${match.home}" data-home-icon="${match.homeIcon}" data-away="${match.away}" data-away-icon="${match.awayIcon}" data-channel="${match.channel}" data-commentator="${match.commentator}" data-stadium="${match.stadium}" data-home-prob="${match.homeProb}" data-away-prob="${match.awayProb}">
+                            <div class="team home"><span class="team-name">${match.home}</span><span class="team-icon">${match.homeIcon}</span></div>
+                            <div class="match-info">
+                                <span class="match-score ${isLive ? 'live' : ''}">${match.score || match.time}</span>
+                                <span class="match-status-text" style="color: ${isLive ? 'var(--live-red)' : 'var(--text-muted)'}">${match.status}</span>
+                            </div>
+                            <div class="team away"><span class="team-icon">${match.awayIcon}</span><span class="team-name">${match.away}</span></div>
+                        </div>
+                    `;
+                });
+                htmlContent += `</div>`;
+            });
+
+            mainArea.innerHTML = htmlContent || `<div class="news-card" style="text-align:center;"><h3>لا توجد مباريات</h3></div>`;
+            initMatchCardModalTriggers();
+            initDayNavigationButtons();
+        }
+
+        function initDayNavigationButtons() {
+            document.getElementById('prev-day').onclick = () => { if (currentDayIndex > 0) { currentDayIndex--; renderMatchesView(); } };
+            document.getElementById('next-day').onclick = () => { if (currentDayIndex < 3) { currentDayIndex++; renderMatchesView(); } };
+        }
+
+        function initLeaguesFilter() {
+            const pills = document.querySelectorAll('.league-pill');
+            pills.forEach(pill => {
+                pill.onclick = () => {
+                    pills.forEach(p => p.classList.remove('active'));
+                    pill.classList.add('active');
+                    selectedLeagueFilter = pill.getAttribute('data-league');
+                    renderMatchesView();
+                };
+            });
+        }
+
+        function initSearchEngine() {
+            const searchToggle = document.getElementById('search-toggle-btn');
+            const searchContainer = document.getElementById('search-container');
+            const searchInput = document.getElementById('global-search-input');
+
+            searchToggle.onclick = () => {
+                searchContainer.style.display = searchContainer.style.display === 'none' ? 'block' : 'none';
+                searchInput.focus();
+            };
+
+            searchInput.oninput = (e) => {
+                const q = e.target.value.toLowerCase().trim();
+                document.querySelectorAll('.match-card').forEach(card => {
+                    const h = card.getAttribute('data-home').toLowerCase();
+                    const a = card.getAttribute('data-away').toLowerCase();
+                    card.style.display = (h.includes(q) || a.includes(q)) ? 'flex' : 'none';
+                });
+            };
+        }
+
+        function initMatchCardModalTriggers() {
+            const modal = document.getElementById('match-details-modal');
+            const closeModal = document.getElementById('close-modal-btn');
+
+            document.querySelectorAll('.match-card').forEach(card => {
+                card.onclick = () => {
+                    document.getElementById('modal-tournament-title').innerText = card.getAttribute('data-tour');
+                    document.getElementById('modal-home-name').innerText = card.getAttribute('data-home');
+                    document.getElementById('modal-home-icon').innerText = card.getAttribute('data-home-icon');
+                    document.getElementById('modal-away-name').innerText = card.getAttribute('data-away');
+                    document.getElementById('modal-away-icon').innerText = card.getAttribute('data-away-icon');
+                    document.getElementById('modal-channel').innerText = card.getAttribute('data-channel');
+                    document.getElementById('modal-commentator').innerText = card.getAttribute('data-commentator');
+                    document.getElementById('modal-stadium').innerText = card.getAttribute('data-stadium');
+
+                    const hp = card.getAttribute('data-home-prob');
+                    const ap = card.getAttribute('data-away-prob');
+                    document.getElementById('home-prob-text').innerText = `فوز المضيف (${hp}%)`;
+                    document.getElementById('away-prob-text').innerText = `فوز الضيف (${ap}%)`;
+                    document.getElementById('home-progress-bar').style.width = `${hp}%`;
+                    document.getElementById('modal-ai-text').innerText = `تحليل الذكاء الاصطناعي: المؤشرات تفضل أداء ${card.getAttribute('data-home')} وسط توقعات بمباراة حماسية.`;
+
+                    modal.style.display = 'flex';
+                };
+            });
+
+            closeModal.onclick = () => modal.style.display = 'none';
+            window.onclick = (e) => { if (e.target === modal) modal.style.display = 'none'; };
+        }
+    </script>
 </body>
 </html>
