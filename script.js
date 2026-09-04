@@ -1,98 +1,122 @@
 // ==========================================
-//  MatchDay AI - Clean Script
+// MatchDay AI - Clean Professional Script
 // ==========================================
 
-window.onload = () => {
-    setupExactTabs();
-    setupTeamSelectionDropdown();
-};
+document.addEventListener("DOMContentLoaded", () => {
+    initApp();
+    setupSwipeNavigation();
+    setupAutoRefresh();
+});
 
-// 1. نظام التبويبات الدقيق (كل زرار يفتح القسم الخاص بيه فقط)
-function setupExactTabs() {
-    // تحديد الأزرار والأسئلة بدقة
-    const tabButtons = document.querySelectorAll('.tab-btn, .nav-tab');
-    
-    // الأقسام الأساسية
-    const aiSection = document.querySelector('.ai-analysis-section') || document.getElementById('ai-section');
-    const lineupSection = document.querySelector('.lineup-section') || document.getElementById('lineup-section');
-    const statsSection = document.querySelector('.stats-section') || document.getElementById('stats-section');
-    const eventsSection = document.querySelector('.events-section') || document.getElementById('events-section');
+// تهيئة التطبيق والأحداث
+function initApp() {
+    const matchCards = document.querySelectorAll('.match-card');
+    const modal = document.getElementById('match-details-modal');
+    const closeModalBtn = document.getElementById('close-modal');
+    const tournamentTitle = document.getElementById('modal-tournament-name');
 
-    const allSections = [aiSection, lineupSection, statsSection, eventsSection];
-
-    // إخفاء كل الأقسام مبدئياً
-    allSections.forEach(sec => {
-        if (sec) sec.style.display = 'none';
-    });
-
-    // تشغيل الأزرار
-    tabButtons.forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            tabButtons.forEach(t => t.classList.remove('active'));
-            e.currentTarget.classList.add('active');
-
-            const text = e.currentTarget.innerText.trim();
-
-            // إخفاء الكل عند الضغط
-            allSections.forEach(sec => {
-                if (sec) sec.style.display = 'none';
-            });
-
-            // فتح القسم المطابق للكلمة بالضبط
-            if (text.includes('تحليل') && aiSection) {
-                aiSection.style.display = 'block';
-            } else if ((text.includes('التشكيل') || text.includes('الملعب')) && lineupSection) {
-                lineupSection.style.display = 'block';
-            } else if (text.includes('الإحصائيات') && statsSection) {
-                statsSection.style.display = 'block';
-            } else if (text.includes('أحداث') && eventsSection) {
-                eventsSection.style.display = 'block';
-                formatTimelineEvents(eventsSection);
+    // عند الضغط على أي مباراة، يظهر تحليلها واسم بطولتها
+    matchCards.forEach(card => {
+        card.addEventListener('click', (e) => {
+            const groupHeader = card.closest('.matches-group').querySelector('.group-header span');
+            if (groupHeader && tournamentTitle) {
+                tournamentTitle.innerText = "بطولة: " + groupHeader.innerText;
+            }
+            if (modal) {
+                modal.style.display = 'block';
             }
         });
     });
 
-    // كارت النتيجة لإظهار وإخفاء التحليل
-    const scoreCard = document.querySelector('.score-board') || document.querySelector('.match-card');
-    if (scoreCard && aiSection) {
-        scoreCard.style.cursor = 'pointer';
-        scoreCard.addEventListener('click', () => {
-            aiSection.style.display = (aiSection.style.display === 'none') ? 'block' : 'none';
+    // إغلاق مودال التحليل
+    if (closeModalBtn && modal) {
+        closeModalBtn.addEventListener('click', () => {
+            modal.style.display = 'none';
         });
     }
 }
 
-// 2. تصميم أحداث الماتش كخط طولي متصل (Timeline)
-function formatTimelineEvents(section) {
-    if (!document.getElementById('timeline-custom-css')) {
-        const style = document.createElement('style');
-        style.id = 'timeline-custom-css';
-        style.innerHTML = `
-            .events-section, .match-events {
-                position: relative;
-                padding-right: 25px !important;
-                border-right: 3px solid #3b82f6 !important;
-                margin-right: 15px !important;
-                margin-top: 15px !important;
-                text-align: right;
+// ميزة السحب (Swipe) يمين ويسار التنقل بين الأيام + أزرار الاختصار
+function setupSwipeNavigation() {
+    const container = document.getElementById('swipe-container');
+    const prevBtn = document.getElementById('prev-day');
+    const nextBtn = document.getElementById('next-day');
+    const dateText = document.getElementById('current-date-text');
+
+    // تواريخ تجريبية للتنقل السريع
+    const days = [
+        "الخميس، 03/09/2026",
+        "الجمعة، 04/09/2026 (اليوم)",
+        "السبت، 05/09/2026"
+    ];
+    let currentIndex = 1;
+
+    function updateDate(index) {
+        if (dateText) {
+            dateText.innerText = days[index];
+            // تأثير وميض خفيف عند التغيير
+            dateText.style.opacity = '0.3';
+            setTimeout(() => dateText.style.opacity = '1', 200);
+        }
+    }
+
+    // أزرار الاختصار فوق
+    if (prevBtn) {
+        prevBtn.addEventListener('click', () => {
+            if (currentIndex > 0) {
+                currentIndex--;
+                updateDate(currentIndex);
             }
-            .events-section li, .match-events div {
-                position: relative;
-                margin-bottom: 12px;
+        });
+    }
+
+    if (nextBtn) {
+        nextBtn.addEventListener('click', () => {
+            if (currentIndex < days.length - 1) {
+                currentIndex++;
+                updateDate(currentIndex);
             }
-        `;
-        document.head.appendChild(style);
+        });
+    }
+
+    // السحب باللمس (Touch Swipe) للأجهزة الذكية والموبايل
+    let touchStartX = 0;
+    let touchEndX = 0;
+
+    if (container) {
+        container.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+        }, {passive: true});
+
+        container.addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipeGesture();
+        }, {passive: true});
+    }
+
+    function handleSwipeGesture() {
+        const threshold = 50; // الحد الأدنى لمسافة السحب
+        if (touchEndX < touchStartX - threshold) {
+            // سحب لليسار -> اليوم التالي (المباريات القادمة)
+            if (currentIndex < days.length - 1) {
+                currentIndex++;
+                updateDate(currentIndex);
+            }
+        }
+        if (touchEndX > touchStartX + threshold) {
+            // سحب لليمين -> اليوم السابق (المباريات التي انتهت)
+            if (currentIndex > 0) {
+                currentIndex--;
+                updateDate(currentIndex);
+            }
+        }
     }
 }
 
-// 3. إصلاح مشكلة اختيار الفريق والأزرار العلوية (دوري أبطال إفريقيا، الدوري الإنجليزي، إلخ)
-function setupTeamSelectionDropdown() {
-    const leagueButtons = document.querySelectorAll('.league-btn, .top-nav-btn, [class*="btn"]');
-    
-    leagueButtons.forEach(btn => {
-        btn.addEventListener('click', function() {
-            leagueButtons.forEach(b => b.classList.remove('active-league'));
-            this.classList.add('active-league');
-        });
-    });
+// التحديث التلقائي للمباريات كل 30 ثانية
+function setupAutoRefresh() {
+    setInterval(() => {
+        console.log("جاري تحديث النتائج الحية تلقائياً كل 30 ثانية...");
+        // هنا يمكن جلب بيانات الأهداف والنتائج الحية لاحقاً بدون إعادة تحميل الصفحة بالكامل
+    }, 30000);
 }

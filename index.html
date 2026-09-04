@@ -3,175 +3,125 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MatchDay AI - مركز المباريات والتحليل</title>
+    <title>MatchDay AI - المباريات</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- FontAwesome للايقونات -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
 
-    <!-- الهيدر الرئيسي -->
-    <header class="glass-card">
-        <div class="logo"><i class="fa-solid fa-bolt"></i> MatchDay AI</div>
-        <button class="fav-btn" id="openModalBtn">
-            <i class="fa-solid fa-star"></i> <span id="fav-team-text">اختر فريقك</span>
-        </button>
+    <!-- خلفية فقاعات البينك الجمالية -->
+    <div class="pink-bubbles-bg">
+        <div class="bubble b1"></div>
+        <div class="bubble b2"></div>
+        <div class="bubble b3"></div>
+    </div>
+
+    <!-- الهيدر العلوي والاختصارات -->
+    <header class="app-header">
+        <div class="top-bar">
+            <h1 class="logo">MatchDay AI <i class="fa-solid fa-bolt"></i></h1>
+            <div class="header-actions">
+                <button class="icon-btn" id="search-btn"><i class="fa-solid fa-search"></i></button>
+                <button class="icon-btn" id="filter-btn"><i class="fa-solid fa-filter"></i></button>
+            </div>
+        </div>
+
+        <!-- شريط التنقل بين الأيام (اختصارات + سحب) -->
+        <div class="date-navigator">
+            <button class="date-arrow-btn" id="prev-day"><i class="fa-solid fa-chevron-right"></i></button>
+            <div class="date-display" id="current-date-text">الجمعة، 04/09/2026</div>
+            <button class="date-arrow-btn" id="next-day"><i class="fa-solid fa-chevron-left"></i></button>
+        </div>
     </header>
 
-    <!-- إعلان علوي -->
-    <div class="ad-banner">📢 مساحة إعلانية - Top Banner Ad</div>
+    <!-- المحتوى الرئيسي القابل للسحب (Swipe Area) -->
+    <main class="main-container" id="swipe-container">
 
-    <!-- شريط إشعارات الانتقالات -->
-    <div class="transfer-alert" id="transfer-box">
-        🔥 <strong>سوق الانتقالات:</strong> قم باختيار فريقك المفضل لمتابعة أحدث الصفقات والتنبيهات الحية!
-    </div>
-
-    <!-- شريط اختيار الدوري -->
-    <div class="league-selector">
-        <button class="league-btn active" onclick="switchMatch('afr')">🏆 دوري أبطال إفريقيا</button>
-        <button class="league-btn" onclick="switchMatch('eng')">🦁 الدوري الإنجليزي</button>
-        <button class="league-btn" onclick="switchMatch('esp')">🇪🇸 الدوري الإسباني</button>
-    </div>
-
-    <!-- كارت المباراة الرئيسي -->
-    <div class="glass-card" id="main-match-card">
-        <div class="league-title">
-            <span id="match-league">🏆 دوري أبطال إفريقيا - النهائي</span>
-            <span class="live-badge" id="match-status">مباشر 68'</span>
-        </div>
-
-        <div class="teams-container">
-            <div class="team">
-                <div class="team-icon" id="home-icon">🦅</div>
-                <div class="team-name" id="home-name">الأهلي</div>
+        <!-- قسم المفضلة -->
+        <section class="matches-group favorites-section">
+            <div class="group-header">
+                <span>المفضلة</span>
+                <i class="fa-solid fa-star active-star"></i>
             </div>
-            <div class="score-box" id="match-score">2 - 1</div>
-            <div class="team">
-                <div class="team-icon" id="away-icon">🏹</div>
-                <div class="team-name" id="away-name">الزمالك</div>
+            <div id="favorites-list">
+                <!-- يتم تعبئتها ديناميكياً -->
             </div>
-        </div>
+        </section>
 
-        <!-- أزرار التنقل بين تفاصيل الماتش -->
-        <div class="tabs-nav">
-            <button class="tab-btn active" onclick="showTab('ai-tab')">🤖 تحليل الذكاء الاصطناعي</button>
-            <button class="tab-btn" onclick="showTab('pitch-tab')">🏟️ التشكيل والملعب</button>
-            <button class="tab-btn" onclick="showTab('stats-tab')">📊 الإحصائيات</button>
-            <button class="tab-btn" onclick="showTab('timeline-tab')">⏱️ أحداث الماتش</button>
-        </div>
+        <!-- قسم البطولات المجمعة -->
+        <div id="tournaments-container">
+            <!-- الدوري الإنجليزي -->
+            <div class="matches-group">
+                <div class="group-header">
+                    <span>الدوري الإنجليزي</span>
+                    <i class="fa-solid fa-trophy"></i>
+                </div>
+                <div class="match-card" data-match-id="1">
+                    <div class="team home">
+                        <span class="team-name">إبسويتش</span>
+                        <img src="https://resources.premierleague.com/premierleague/badges/70/t40.png" alt="Ipswich" onerror="this.src='https://via.placeholder.5.com/30'">
+                    </div>
+                    <div class="match-info">
+                        <span class="match-time">10:00 م</span>
+                    </div>
+                    <div class="team away">
+                        <img src="https://resources.premierleague.com/premierleague/badges/70/t14.png" alt="Liverpool" onerror="this.src='https://via.placeholder.5.com/30'">
+                        <span class="team-name">ليفربول</span>
+                    </div>
+                </div>
+            </div>
 
-        <!-- تبويب 1: توقع وتحليل AI -->
-        <div class="tab-content active" id="ai-tab">
-            <div class="ai-section">
-                <div class="ai-title"><i class="fa-solid fa-brain"></i> محرك التوقعات الذكي</div>
-                <div class="progress-bar-container">
-                    <div class="bar-home" id="ai-home-bar" style="width: 55%;"></div>
-                    <div class="bar-draw" id="ai-draw-bar" style="width: 25%;"></div>
-                    <div class="bar-away" id="ai-away-bar" style="width: 20%;"></div>
+            <!-- الدوري الإسباني -->
+            <div class="matches-group">
+                <div class="group-header">
+                    <span>الدوري الإسباني</span>
+                    <i class="fa-solid fa-trophy"></i>
                 </div>
-                <div class="prob-text">
-                    <span id="ai-home-text">فوز الأهلي: 55%</span>
-                    <span id="ai-draw-text">التعادل: 25%</span>
-                    <span id="ai-away-text">فوز الزمالك: 20%</span>
-                </div>
-                <div class="ai-analysis" id="ai-analysis-text">
-                    💡 <strong>التحليل الفني:</strong> ضغط عالي متوقع من الأطراف، نسبة استعادة الكرة في الوسط ترجح كفة الفريق المضيف بنسبة أكبر في الدقائق المتبقية.
+                <div class="match-card" data-match-id="2">
+                    <div class="team home">
+                        <span class="team-name">ريال بيتيس</span>
+                        <img src="https://upload.wikimedia.org/wikipedia/en/1/13/Real_betis_logo.svg" alt="Betis" onerror="this.src='https://via.placeholder.com/30'">
+                    </div>
+                    <div class="match-info">
+                        <span class="match-time">10:00 م</span>
+                    </div>
+                    <div class="team away">
+                        <img src="https://upload.wikimedia.org/wikipedia/en/5/56/Real_Madrid_CF.svg" alt="Real Madrid" onerror="this.src='https://via.placeholder.com/30'">
+                        <span class="team-name">ريال مدريد</span>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- تبويب 2: الملعب والتشكيل -->
-        <div class="tab-content" id="pitch-tab">
-            <div class="pitch">
-                <div class="pitch-line center-line"></div>
-                <div class="pitch-circle"></div>
-                <!-- تشكيل الفريقين (4-3-3) -->
-                <div class="lineup-row">
-                    <div class="player-dot home" onclick="showPlayer('محمد الشناوي (حارس مرمى) - تقييم 7.8')"></div>
+        <!-- قسم تفاصيل المباراة والذكاء الاصطناعي (يظهر عند الضغط) -->
+        <div id="match-details-modal" class="ai-analysis-section" style="display: none;">
+            <div class="modal-content-box">
+                <div class="modal-top">
+                    <h3 id="modal-tournament-name">اسم البطولة</h3>
+                    <button id="close-modal"><i class="fa-solid fa-xmark"></i></button>
                 </div>
-                <div class="lineup-row">
-                    <div class="player-dot home" onclick="showPlayer('علي معلول - تقييم 8.1')"></div>
-                    <div class="player-dot home" onclick="showPlayer('محمد عبد المنعم - تقييم 7.5')"></div>
-                    <div class="player-dot home" onclick="showPlayer('رامي ربيعة - تقييم 7.2')"></div>
-                    <div class="player-dot home" onclick="showPlayer('محمد هاني - تقييم 7.0')"></div>
-                </div>
-                <div class="lineup-row">
-                    <div class="player-dot home" onclick="showPlayer('مروان عطية - تقييم 7.6')"></div>
-                    <div class="player-dot home" onclick="showPlayer('إمام عاشور - تقييم 8.4')"></div>
-                    <div class="player-dot home" onclick="showPlayer('أليو ديانج - تقييم 7.3')"></div>
-                </div>
-                <div class="lineup-row">
-                    <div class="player-dot home" onclick="showPlayer('حسين الشحات - تقييم 8.0')"></div>
-                    <div class="player-dot home" onclick="showPlayer('وسام أبو علي - تقييم 8.5 (صاحب هدف)')"></div>
-                    <div class="player-dot home" onclick="showPlayer('بيرسي تاو - تقييم 7.7')"></div>
-                </div>
-            </div>
-            <div class="player-info-box" id="player-card">اضغط على أي لاعب في الملعب لعرض الاسم والتقييم</div>
-        </div>
-
-        <!-- تبويب 3: الإحصائيات -->
-        <div class="tab-content" id="stats-tab">
-            <div class="stat-row">
-                <div class="stat-labels"><span id="stat-pos-h">62%</span><span>الاستحواذ</span><span id="stat-pos-a">38%</span></div>
-                <div class="progress-bar-container">
-                    <div class="bar-home" id="bar-pos-h" style="width: 62%;"></div>
-                    <div class="bar-away" id="bar-pos-a" style="width: 38%;"></div>
-                </div>
-            </div>
-            <div class="stat-row">
-                <div class="stat-labels"><span id="stat-sht-h">15</span><span>التسديدات</span><span id="stat-sht-a">7</span></div>
-                <div class="progress-bar-container">
-                    <div class="bar-home" id="bar-sht-h" style="width: 68%;"></div>
-                    <div class="bar-away" id="bar-sht-a" style="width: 32%;"></div>
-                </div>
-            </div>
-            <div class="stat-row">
-                <div class="stat-labels"><span id="stat-pas-h">450</span><span>التمريرات الناجحة</span><span id="stat-pas-a">280</span></div>
-                <div class="progress-bar-container">
-                    <div class="bar-home" id="bar-pas-h" style="width: 61%;"></div>
-                    <div class="bar-away" id="bar-pas-a" style="width: 39%;"></div>
+                <div class="ai-card-body">
+                    <h4><i class="fa-solid fa-wand-magic-sparkles"></i> محرك التوقعات الذكي</h4>
+                    <div class="prediction-bars">
+                        <div class="bar-item"><span>فوز الأهلي 55%</span><div class="progress"><div class="fill" style="width: 55%;"></div></div></div>
+                        <div class="bar-item"><span>التعادل 25%</span><div class="progress"><div class="fill" style="width: 25%;"></div></div></div>
+                    </div>
+                    <p class="ai-text">التحليل الفني: ضغط عالي متوقع من الأطراف، نسبة استحواذ الكرة ترجح كفة الفريق المضيف.</p>
                 </div>
             </div>
         </div>
 
-        <!-- تبويب 4: أحداث الماتش -->
-        <div class="tab-content" id="timeline-tab">
-            <ul class="timeline-list" id="timeline-events">
-                <li>⚽ <strong>الدقيقة 12':</strong> هدف للأهلي عن طريق وسام أبو علي</li>
-                <li>🟨 <strong>الدقيقة 28':</strong> كارت أصفر للاعب الزمالك</li>
-                <li>⚽ <strong>الدقيقة 41':</strong> هدف التعادل للزمالك</li>
-                <li>⚽ <strong>الدقيقة 55':</strong> هدف تقدم للأهلي عن طريق إمام عاشور</li>
-            </ul>
-        </div>
+    </main>
 
-    </div>
-
-    <!-- قسم أخبار وانتقالات الفريق المفضل -->
-    <div class="glass-card">
-        <h3 style="color: var(--neon-blue); margin-bottom: 15px;"><i class="fa-solid fa-newspaper"></i> مركز أحدث الأخبار</h3>
-        <div id="news-container">
-            <div class="news-card">
-                <h4>🔥 تفاصيل المفاوضات الجديدة</h4>
-                <p>إدارة النادي تدخل في مفاوضات متقدمة لحسم صفقة المهاجم الجديد قبل إغلاق الميركاتو.</p>
-            </div>
-        </div>
-    </div>
-
-    <!-- إعلان سفلي -->
-    <div class="ad-banner">📢 مساحة إعلانية - Bottom Square Ad</div>
-
-    <!-- Modal اختيار الفريق -->
-    <div class="modal" id="favModal">
-        <div class="modal-content glass-card">
-            <h2 style="color: var(--neon-blue); margin-bottom: 10px;">اختر فريقك المفضل ⭐</h2>
-            <p style="color: var(--text-sub); font-size: 0.85rem; margin-bottom: 15px;">تخصيص الواجهة والإشعارات والأخبار حسب اختيارك</p>
-            <div class="team-option" data-team="الأهلي">🦅 الأهلي</div>
-            <div class="team-option" data-team="الزمالك">🏹 الزمالك</div>
-            <div class="team-option" data-team="ريال مدريد">👑 ريال مدريد</div>
-            <div class="team-option" data-team="برشلونة">🔵 برشلونة</div>
-            <div class="team-option" data-team="مانشستر سيتي">🩵 مانشستر سيتي</div>
-            <div class="team-option" data-team="ليفربول">🔴 ليفربول</div>
-        </div>
-    </div>
+    <!-- شريط التنقل السفلي -->
+    <nav class="bottom-nav">
+        <a href="#" class="nav-item active"><i class="fa-solid fa-futbol"></i> المباريات</a>
+        <a href="#" class="nav-item"><i class="fa-solid fa-newspaper"></i> الأخبار</a>
+        <a href="#" class="nav-item"><i class="fa-solid fa-right-left"></i> الانتقالات</a>
+        <a href="#" class="nav-item"><i class="fa-solid fa-chart-bar"></i> الترتيب</a>
+        <a href="#" class="nav-item"><i class="fa-solid fa-bars"></i> المزيد</a>
+    </nav>
 
     <script src="script.js"></script>
 </body>
