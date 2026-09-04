@@ -1,111 +1,134 @@
-// ==========================================
-//  MatchDay AI - Script
-// ==========================================
-
-window.onload = () => {
-    fetchLiveMatches();
-    setupTabsAndToggle();
-    setupTeamSelection();
-};
-
-function fetchLiveMatches() {
-    console.log("جاري تحميل بيانات المباريات...");
-}
-
-// 1. نظام التبويبات والتحكم في ظهور الأقسام بدقة
+// 1. نظام التبويبات والتحكم في ظهور الأقسام
 function setupTabsAndToggle() {
-    // تحديد عناصر التبويبات والأقسام المختلفة
-    const tabs = document.querySelectorAll('.tab-btn, .nav-tab');
-    
-    // الأقسام الأساسية في الصفحة
-    const aiSection = document.querySelector('.ai-analysis-section') || document.getElementById('ai-section');
-    const lineupSection = document.querySelector('.lineup-section') || document.querySelector('.lineup') || document.getElementById('lineup-section');
-    const statsSection = document.querySelector('.stats-section') || document.getElementById('stats-section');
-    const eventsSection = document.querySelector('.events-section') || document.getElementById('events-section');
 
-    // إخفاء التحليل وباقي الأقسام افتراضياً عند فتح الصفحة، وترك النتيجة فقط
-    [aiSection, lineupSection, statsSection, eventsSection].forEach(sec => {
-        if (sec) sec.style.display = 'none';
+    // جميع التبويبات
+    const tabs = document.querySelectorAll('.tab-btn, .nav-tab');
+
+    // الأقسام
+    const aiSection =
+        document.querySelector('.ai-analysis-section') ||
+        document.getElementById('ai-section');
+
+    const lineupSection =
+        document.querySelector('.lineup-section') ||
+        document.querySelector('.lineup') ||
+        document.getElementById('lineup-section');
+
+    const statsSection =
+        document.querySelector('.stats-section') ||
+        document.getElementById('stats-section');
+
+    const eventsSection =
+        document.querySelector('.events-section') ||
+        document.getElementById('events-section');
+
+    const sections = [
+        aiSection,
+        lineupSection,
+        statsSection,
+        eventsSection
+    ];
+
+    // إخفاء كل الأقسام في البداية
+    sections.forEach(section => {
+        if (section) {
+            section.style.display = 'none';
+        }
     });
 
-    // إمكانية الضغط على كارت النتيجة لإظهار وإخفاء التحليل الافتراضي
-    const scoreCard = document.querySelector('.score-board') || document.querySelector('.match-card');
-    if (scoreCard && aiSection) {
-        scoreCard.style.cursor = 'pointer';
-        scoreCard.addEventListener('click', () => {
-            aiSection.style.display = (aiSection.style.display === 'none') ? 'block' : 'none';
-        });
-    }
+    // ==============================
+    // التبويبات
+    // ==============================
 
-    // ربط التبويبات بالأقسام بتاعتها بالظبط عشان كل زرار يفتح جزئه المخصص
     tabs.forEach(tab => {
-        tab.addEventListener('click', (e) => {
-            tabs.forEach(t => t.classList.remove('active'));
-            e.target.classList.add('active');
 
-            const tabText = e.target.innerText.trim();
+        tab.addEventListener('click', function (e) {
 
-            // إخفاء الكل الأول
-            [aiSection, lineupSection, statsSection, eventsSection].forEach(sec => {
-                if (sec) sec.style.display = 'none';
+            // مهم جداً:
+            // يمنع ضغطة التبويب من الوصول لكارت المباراة
+            e.stopPropagation();
+
+            // استخدام currentTarget بدل target
+            const clickedTab = e.currentTarget;
+
+            // إزالة Active من كل التبويبات
+            tabs.forEach(t => {
+                t.classList.remove('active');
             });
 
-            // إظهار القسم المناسب حسب التبويب اللي دُست عليه
-            if (tabText.includes('تحليل') && aiSection) {
-                aiSection.style.display = 'block';
-            } else if (tabText.includes('التشكيل') && lineupSection) {
-                lineupSection.style.display = 'block';
-            } else if (tabText.includes('الإحصائيات') && statsSection) {
-                statsSection.style.display = 'block';
-            } else if (tabText.includes('أحداث') && eventsSection) {
-                eventsSection.style.display = 'block';
-                formatTimelineEvents(eventsSection); // تنسيق الأحداث كخط زمني رأسي
+            // تفعيل التبويب الحالي
+            clickedTab.classList.add('active');
+
+            // النص الموجود في التبويب
+            const tabText = clickedTab.innerText.trim();
+
+            // إخفاء كل الأقسام
+            sections.forEach(section => {
+                if (section) {
+                    section.style.display = 'none';
+                }
+            });
+
+            // ==============================
+            // تحديد القسم المطلوب
+            // ==============================
+
+            if (tabText.includes('تحليل')) {
+
+                if (aiSection) {
+                    aiSection.style.display = 'block';
+                }
+
+            } else if (
+                tabText.includes('التشكيل') ||
+                tabText.includes('الملعب')
+            ) {
+
+                if (lineupSection) {
+                    lineupSection.style.display = 'block';
+                }
+
+            } else if (tabText.includes('الإحصائيات')) {
+
+                if (statsSection) {
+                    statsSection.style.display = 'block';
+                }
+
+            } else if (tabText.includes('أحداث')) {
+
+                if (eventsSection) {
+                    eventsSection.style.display = 'block';
+                    formatTimelineEvents(eventsSection);
+                }
             }
+
         });
     });
-}
 
-// 2. تحويل أحداث الماتش لشكل خط طولي (Timeline) رائع
-function formatTimelineEvents(container) {
-    // إضافة تصميم الخط الطولي للأحداث لو مش موجود
-    if (!document.getElementById('timeline-custom-style')) {
-        const style = document.createElement('style');
-        style.id = 'timeline-custom-style';
-        style.innerHTML = `
-            .events-section, .match-events {
-                position: relative;
-                padding-left: 30px !important;
-                border-left: 3px solid #3b82f6 !important;
-                margin-left: 20px !important;
-                margin-top: 15px !important;
-            }
-            .event-item, li, .event-row {
-                position: relative;
-                margin-bottom: 15px;
-                list-style: none;
-            }
-            .event-item::before, li::before {
-                content: '';
-                position: absolute;
-                left: -33.5px;
-                top: 5px;
-                width: 12px;
-                height: 12px;
-                background: #3b82f6;
-                border-radius: 50%;
-                border: 2px solid #fff;
-            }
-        `;
-        document.head.appendChild(style);
-    }
-}
+    // ==============================
+    // كارت المباراة
+    // ==============================
 
-function setupTeamSelection() {
-    const teamSelect = document.getElementById('team-select');
-    if (teamSelect) {
-        teamSelect.addEventListener('change', (e) => {
-            const favText = document.getElementById('fav-team-text');
-            if (favText) favText.innerText = e.target.value;
+    const scoreCard =
+        document.querySelector('.score-board') ||
+        document.querySelector('.match-card');
+
+    if (scoreCard && aiSection) {
+
+        scoreCard.style.cursor = 'pointer';
+
+        scoreCard.addEventListener('click', function (e) {
+
+            // لو الضغط كان على تبويب، ما تعملش حاجة
+            if (e.target.closest('.tab-btn, .nav-tab')) {
+                return;
+            }
+
+            // فتح / إغلاق تحليل الـAI
+            aiSection.style.display =
+                aiSection.style.display === 'none'
+                    ? 'block'
+                    : 'none';
         });
     }
 }
