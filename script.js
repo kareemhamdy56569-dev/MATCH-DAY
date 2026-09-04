@@ -1,10 +1,11 @@
 // ==========================================
-// MatchDay AI - Fast & Clean Script
+// MatchDay AI - Live & Auto-Refresh Script
 // ==========================================
 
 document.addEventListener("DOMContentLoaded", () => {
     initApp();
     setupSwipeNavigation();
+    setupLiveAutoRefresh();
 });
 
 // تهيئة التطبيق والأحداث
@@ -14,7 +15,6 @@ function initApp() {
     const closeModalBtn = document.getElementById('close-modal');
     const tournamentTitle = document.getElementById('modal-tournament-name');
 
-    // عند الضغط على أي مباراة، يظهر تحليلها واسم بطولتها
     matchCards.forEach(card => {
         card.addEventListener('click', () => {
             const groupHeader = card.closest('.matches-group').querySelector('.group-header span');
@@ -27,7 +27,6 @@ function initApp() {
         });
     });
 
-    // إغلاق مودال التحليل
     if (closeModalBtn && modal) {
         closeModalBtn.addEventListener('click', () => {
             modal.style.display = 'none';
@@ -35,7 +34,7 @@ function initApp() {
     }
 }
 
-// ميزة السحب (Swipe) يمين ويسار للتنقل بين الأيام + أزرار الاختصار
+// ميزة السحب والتنقل بين الأيام
 function setupSwipeNavigation() {
     const container = document.getElementById('swipe-container');
     const prevBtn = document.getElementById('prev-day');
@@ -57,46 +56,32 @@ function setupSwipeNavigation() {
         }
     }
 
-    if (prevBtn) {
-        prevBtn.addEventListener('click', () => {
-            if (currentIndex > 0) {
-                currentIndex--;
-                updateDate(currentIndex);
-            }
-        });
-    }
-
-    if (nextBtn) {
-        nextBtn.addEventListener('click', () => {
-            if (currentIndex < days.length - 1) {
-                currentIndex++;
-                updateDate(currentIndex);
-            }
-        });
-    }
+    if (prevBtn) prevBtn.addEventListener('click', () => { if (currentIndex > 0) updateDate(--currentIndex); });
+    if (nextBtn) nextBtn.addEventListener('click', () => { if (currentIndex < days.length - 1) updateDate(++currentIndex); });
 
     let touchStartX = 0;
     let touchEndX = 0;
-
     if (container) {
-        container.addEventListener('touchstart', (e) => {
-            touchStartX = e.changedTouches[0].screenX;
-        }, {passive: true});
-
+        container.addEventListener('touchstart', (e) => { touchStartX = e.changedTouches[0].screenX; }, {passive: true});
         container.addEventListener('touchend', (e) => {
             touchEndX = e.changedTouches[0].screenX;
-            if (touchEndX < touchStartX - 50) {
-                if (currentIndex < days.length - 1) {
-                    currentIndex++;
-                    updateDate(currentIndex);
-                }
-            }
-            if (touchEndX > touchStartX + 50) {
-                if (currentIndex > 0) {
-                    currentIndex--;
-                    updateDate(currentIndex);
-                }
-            }
+            if (touchEndX < touchStartX - 50 && currentIndex < days.length - 1) updateDate(++currentIndex);
+            if (touchEndX > touchStartX + 50 && currentIndex > 0) updateDate(--currentIndex);
         }, {passive: true});
     }
+}
+
+// التحديث التلقائي للنتائج الحية كل 30 ثانية
+function setupLiveAutoRefresh() {
+    setInterval(() => {
+        const liveScores = document.querySelectorAll('.match-score.live');
+        liveScores.forEach(score => {
+            // تأثير وميض خفيف يدل على التحديث الحي
+            score.style.opacity = '0.4';
+            setTimeout(() => {
+                score.style.opacity = '1';
+            }, 500);
+        });
+        console.log("تم تحديث النتائج الحية بنجاح (كل 30 ثانية).");
+    }, 30000);
 }

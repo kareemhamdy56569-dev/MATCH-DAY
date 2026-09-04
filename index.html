@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MatchDay AI - المباريات الرسمية</title>
+    <title>MatchDay AI - جميع الدوريات والمباريات الحية</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -25,7 +25,7 @@
             </div>
         </div>
 
-        <!-- شريط التنقل بين الأيام (اختصارات + سحب) -->
+        <!-- شريط التنقل بين الأيام -->
         <div class="date-navigator">
             <button class="date-arrow-btn" id="prev-day">◀</button>
             <div class="date-display" id="current-date-text">الجمعة، 04/09/2026</div>
@@ -33,7 +33,7 @@
         </div>
     </header>
 
-    <!-- المحتوى الرئيسي القابل للسحب (Swipe Area) -->
+    <!-- المحتوى الرئيسي -->
     <main class="main-container" id="swipe-container">
 
         <!-- قسم المفضلة -->
@@ -43,11 +43,11 @@
                 <span class="star-icon">⭐</span>
             </div>
             <div id="favorites-list">
-                <!-- مباريات المفضلة المضافة -->
+                <!-- الماتشات المفضلة -->
             </div>
         </section>
 
-        <!-- قسم البطولات المجمعة للمباريات الرسمية -->
+        <!-- قسم البطولات المجمعة -->
         <div id="tournaments-container">
             
             <!-- دوري أبطال إفريقيا -->
@@ -71,7 +71,7 @@
                 </div>
             </div>
 
-            <!-- الدوري الإنجليزي الممتاز -->
+            <!-- الدوري الإنجليزي الممتاز (ليفربول شغال مباشر 2-0) -->
             <div class="matches-group">
                 <div class="group-header">
                     <span>الدوري الإنجليزي الممتاز</span>
@@ -83,7 +83,7 @@
                         <div class="team-dot" style="background: #3b82f6;"></div>
                     </div>
                     <div class="match-info">
-                        <span class="match-time">10:00 م</span>
+                        <span class="match-score live" style="color: #ef4444; font-weight: bold;">2 - 0 🔴</span>
                     </div>
                     <div class="team away">
                         <div class="team-dot" style="background: #dc2626;"></div>
@@ -126,9 +126,72 @@
                 </div>
             </div>
 
+            <!-- الدوري الإيطالي -->
+            <div class="matches-group">
+                <div class="group-header">
+                    <span>الدوري الإيطالي</span>
+                    <span>🏆</span>
+                </div>
+                <div class="match-card" data-match-id="5">
+                    <div class="team home">
+                        <span class="team-name">إنتر ميلان</span>
+                        <div class="team-dot" style="background: #3b82f6;"></div>
+                    </div>
+                    <div class="match-info">
+                        <span class="match-time">09:45 م</span>
+                    </div>
+                    <div class="team away">
+                        <div class="team-dot" style="background: #000000;"></div>
+                        <span class="team-name">يوفنتوس</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- الدوري الألماني -->
+            <div class="matches-group">
+                <div class="group-header">
+                    <span>الدوري الألماني</span>
+                    <span>🏆</span>
+                </div>
+                <div class="match-card" data-match-id="6">
+                    <div class="team home">
+                        <span class="team-name">بايرن ميونخ</span>
+                        <div class="team-dot" style="background: #dc2626;"></div>
+                    </div>
+                    <div class="match-info">
+                        <span class="match-time">09:30 م</span>
+                    </div>
+                    <div class="team away">
+                        <div class="team-dot" style="background: #fbbf24;"></div>
+                        <span class="team-name">دورتموند</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- الدوري الفرنسي -->
+            <div class="matches-group">
+                <div class="group-header">
+                    <span>الدوري الفرنسي</span>
+                    <span>🏆</span>
+                </div>
+                <div class="match-card" data-match-id="7">
+                    <div class="team home">
+                        <span class="team-name">باريس سان جيرمان</span>
+                        <div class="team-dot" style="background: #1e3a8a;"></div>
+                    </div>
+                    <div class="match-info">
+                        <span class="match-time">10:00 م</span>
+                    </div>
+                    <div class="team away">
+                        <div class="team-dot" style="background: #ea580c;"></div>
+                        <span class="team-name">مارسيليا</span>
+                    </div>
+                </div>
+            </div>
+
         </div>
 
-        <!-- قسم تفاصيل المباراة والذكاء الاصطناعي (يظهر عند الضغط) -->
+        <!-- مودال التحليل الذكي -->
         <div id="match-details-modal" class="ai-analysis-section" style="display: none;">
             <div class="modal-content-box">
                 <div class="modal-top">
