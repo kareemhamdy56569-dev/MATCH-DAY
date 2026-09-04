@@ -1,21 +1,18 @@
 // ==========================================
-//  MatchDay AI - Script
+//  MatchDay AI - Clean Script
 // ==========================================
 
 window.onload = () => {
-    fetchLiveMatches();
-    setupCleanTabsAndToggle();
-    setupTeamSelection();
+    setupExactTabs();
+    setupTeamSelectionDropdown();
 };
 
-function fetchLiveMatches() {
-    console.log("جاري تحميل بيانات المباريات...");
-}
-
-// النظام السليم والبسيط للتبويبات وكارت النتيجة
-function setupCleanTabsAndToggle() {
-    const tabs = document.querySelectorAll('.tab-btn, .nav-tab');
+// 1. نظام التبويبات الدقيق (كل زرار يفتح القسم الخاص بيه فقط)
+function setupExactTabs() {
+    // تحديد الأزرار والأسئلة بدقة
+    const tabButtons = document.querySelectorAll('.tab-btn, .nav-tab');
     
+    // الأقسام الأساسية
     const aiSection = document.querySelector('.ai-analysis-section') || document.getElementById('ai-section');
     const lineupSection = document.querySelector('.lineup-section') || document.getElementById('lineup-section');
     const statsSection = document.querySelector('.stats-section') || document.getElementById('stats-section');
@@ -23,25 +20,25 @@ function setupCleanTabsAndToggle() {
 
     const allSections = [aiSection, lineupSection, statsSection, eventsSection];
 
-    // إخفاء الكل في البداية وتفعيل التحليل أو إبقاؤهم مخفيين حسب رغبتك (هنا هنخليهم مخفيين في البداية)
+    // إخفاء كل الأقسام مبدئياً
     allSections.forEach(sec => {
         if (sec) sec.style.display = 'none';
     });
 
-    // التحكم في التبويبات (تحليل، تشكيل، إحصائيات، أحداث)
-    tabs.forEach(tab => {
-        tab.addEventListener('click', (e) => {
-            tabs.forEach(t => t.classList.remove('active'));
+    // تشغيل الأزرار
+    tabButtons.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            tabButtons.forEach(t => t.classList.remove('active'));
             e.currentTarget.classList.add('active');
 
             const text = e.currentTarget.innerText.trim();
 
-            // إخفاء الكل أولاً
+            // إخفاء الكل عند الضغط
             allSections.forEach(sec => {
                 if (sec) sec.style.display = 'none';
             });
 
-            // إظهار القسم المناسب بالظبط بناءً على الزرار اللي دُست عليه
+            // فتح القسم المطابق للكلمة بالضبط
             if (text.includes('تحليل') && aiSection) {
                 aiSection.style.display = 'block';
             } else if ((text.includes('التشكيل') || text.includes('الملعب')) && lineupSection) {
@@ -50,7 +47,7 @@ function setupCleanTabsAndToggle() {
                 statsSection.style.display = 'block';
             } else if (text.includes('أحداث') && eventsSection) {
                 eventsSection.style.display = 'block';
-                formatTimeline(eventsSection); // تصميم الخط الطولي للأحداث
+                formatTimelineEvents(eventsSection);
             }
         });
     });
@@ -65,11 +62,11 @@ function setupCleanTabsAndToggle() {
     }
 }
 
-// تنسيق أحداث الماتش بشكل خط طولي (Timeline)
-function formatTimeline(section) {
-    if (!document.getElementById('timeline-style')) {
+// 2. تصميم أحداث الماتش كخط طولي متصل (Timeline)
+function formatTimelineEvents(section) {
+    if (!document.getElementById('timeline-custom-css')) {
         const style = document.createElement('style');
-        style.id = 'timeline-style';
+        style.id = 'timeline-custom-css';
         style.innerHTML = `
             .events-section, .match-events {
                 position: relative;
@@ -88,12 +85,14 @@ function formatTimeline(section) {
     }
 }
 
-function setupTeamSelection() {
-    const teamSelect = document.getElementById('team-select');
-    if (teamSelect) {
-        teamSelect.addEventListener('change', (e) => {
-            const favText = document.getElementById('fav-team-text');
-            if (favText) favText.innerText = e.target.value;
+// 3. إصلاح مشكلة اختيار الفريق والأزرار العلوية (دوري أبطال إفريقيا، الدوري الإنجليزي، إلخ)
+function setupTeamSelectionDropdown() {
+    const leagueButtons = document.querySelectorAll('.league-btn, .top-nav-btn, [class*="btn"]');
+    
+    leagueButtons.forEach(btn => {
+        btn.addEventListener('click', function() {
+            leagueButtons.forEach(b => b.classList.remove('active-league'));
+            this.classList.add('active-league');
         });
-    }
+    });
 }
